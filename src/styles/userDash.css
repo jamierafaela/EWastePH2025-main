@@ -1,0 +1,598 @@
+/* === Global Styles === */
+:root {
+    --background-light: #f5f5f5;
+    --background-sidebar: #2a5d37;
+    --background-profile: #1e5631;
+    --primary-green: #2a5d37;
+    --accent-yellow: #f1c40f;
+    --dark-yellow: #f39c12;
+    --light-text: #e0e3c9;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "DM Sans", sans-serif;
+    scroll-behavior: smooth;
+    user-select: none;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    background-color: var(--background-light);
+}
+
+/* === Navigation Bar === */
+nav.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #223527;
+    padding: 15px 5%;
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    z-index: 999;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+nav .logo-container .logo img {
+    width: 200px;
+    padding-top: 10px;
+}
+
+button.logo {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+}
+
+/* Navigation Links */
+.nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    padding-right: 35px;
+}
+
+.nav-links li a {
+    color: var(--light-text);
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    transition: color 0.3s;
+}
+
+.nav-links li a:hover {
+    color: var(--accent-yellow);
+}
+
+/* === Layout and Background === */
+.userDashSec {
+    background: linear-gradient(to bottom, rgba(191, 225, 188, 0.8), rgba(72, 169, 98, 0.7));
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    margin: 20px;
+    flex-wrap: wrap;
+}
+
+/* === Sidebar === */
+.sidebar {
+    width: 250px;
+    background: var(--background-sidebar);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 50px;
+}
+
+.sidebar-menu-section h3 {
+    margin-top: 25px;
+    /*color: rgb(165, 238, 55);*/
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--light-text);
+    text-decoration: none;
+    margin: 5px 0;
+    padding: 7px; /* Add padding for bigger clickable area */
+    border-radius: 5px; /* Make hover background nicer */
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.sidebar-link i {
+    margin-right: 8px;
+    font-size: 16px;
+    color: var(--accent-yellow);
+}
+
+.sidebar-link:hover {
+    background-color: #1b3e26; /* Dark green */
+    /*color: #fbf2a2;
+    i{
+        color: #fbf2a2;
+    }
+        */
+}
+/* === Logo and Dashboard Title === */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+    color: var(--accent-yellow);
+}
+
+.dashboard-title {
+    font-size: 18px;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+/* === Profile Card === */
+.profile-card {
+    text-align: center;
+    padding: 20px;
+    background: var(--background-profile);
+    border-radius: 10px;
+    box-shadow: 0px 5px 12px #1b3e26;
+}
+
+.profile-image {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.profile-image-placeholder {
+    width: 90px;
+    height: 90px;
+    background: var(--accent-yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.profile-details {
+    margin-top: 10px;
+}
+
+.profile-details a {
+    margin-top: 10px;
+    color: #c6c8b9;
+    font-size: 13px;
+    display: block;
+    text-decoration: none;
+}
+
+.profile-link {
+    display: block;
+    margin: 10px 0;
+    color: var(--accent-yellow);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.profile-link:hover {
+    color: #96a331;
+}
+
+/* === Main Content === */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    margin-top: 50px;
+}
+
+/* === Cards === */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 2px 5px var(--card-shadow);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* === Search Bar === */
+.search-bar {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* === Stats Cards === */
+.stats-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    flex: 1;
+    background: var(--background-light);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-card p {
+    color: #5c5c55;
+}
+
+/* === Listings and Actions === */
+.listings-actions, .widget-grid {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.listings-action, .alerts-button {
+    display: block;
+    background: var(--primary-green);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    text-decoration: none;
+    border: 1px solid #c0d7c6;
+    transition: all 0.3s ease;
+}
+
+.listings-action:hover, .alerts-button:hover {
+    background: var(--accent-yellow);
+    color: var(--primary-green);
+    transform: scale(1.02);
+}
+
+/* === Tables === */
+.sales-table, .listings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.sales-table th, .sales-table td, 
+.listings-table th, .listings-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sales-table th, .listings-table th {
+    background-color: var(--background-light);
+    font-weight: 600;
+}
+
+.sales-table tr:hover, .listings-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* === Status Badges === */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: #333;
+}
+
+.status-sold {
+    background-color: #e6f7e6;
+    color: #2e7d32;
+}
+
+.status-approved {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.status-pending {
+    background-color: #fff8e1;
+    color: #f57f17;
+}
+
+.status-rejected {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+/* === Empty States === */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #777;
+}
+
+.empty-state i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: #ddd;
+}
+
+/* === Notification Messages === */
+.notification-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    box-shadow: 0 2px 5px var(--card-shadow);
+    display: flex;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.success-message:before, .error-message:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.success-message:before {
+    content: "\f00c";
+}
+
+.error-message:before {
+    content: "\f00d";
+}
+
+/* === Modal === */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: modalAppear 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.close-modal {
+    cursor: pointer;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.close-modal:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 10px 0;
+}
+
+.modal-buttons {
+    text-align: right;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.modal-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+}
+
+.modal-btn:hover {
+    transform: scale(1.05);
+}
+
+.modal-cancel {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.modal-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+.modal-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-delete:hover {
+    background-color: #e53935;
+}
+
+/* === LogOUts === */
+    .logout-btn {
+        margin-top: 10px;
+        background-color: #d3d3d3; /* Light gray */
+        color: #333; /* Darker text */
+        border: none;
+        padding: 5px 11px; /* Thinner padding */
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.077); /* Inset soft shadow */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    }
+    
+    .logout-btn:hover {
+        background-color: #c4c4c4; /* Slightly darker gray on hover */
+        box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2); /* Slightly deeper inset shadow on hover */
+        transform: translateY(0); /* No lift since it's "pressed in" style */
+    }
+    
+
+/* === Registration Success Popup === */
+.registration-success-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.registration-success-container1 {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 500px;
+}
+
+.registration-success-container1 a,
+.close-popup {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.registration-success-container1 a {
+    background-color: #4CAF50;
+}
+
+.close-popup {
+    background-color: #f44336;
+    cursor: pointer;
+}
+
+
+
+
+/* === Recent Activities Section === */
+.recent-activities {
+    margin-top: 20px;
+}
+
+.activity-card {
+    background-color: white;
+    border-left: 5px solid var(--primary-green);
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px var(--card-shadow);
+    transition: background-color 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+    overflow-wrap: break-word;
+}
+
+.activity-card:hover {
+    background-color: #f2f8f2;
+}
+
+.activity-time {
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 5px;
+}
+
+/* === Empty Activity Message === */
+#recent-activities.empty {
+    text-align: center;
+    padding: 40px 20px;
+    font-style: italic;
+    color: #777;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* === Scrollable Activity Box (optional if long list) === */
+.scrollable-activity {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+
+
+/* === Animations === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,154 @@
+.valid {
+    color: #4caf50;
+}
+
+.valid i,
+.invalid i {
+    margin-right: 6px;
+    width: 16px;
+    text-align: center;
+}
+
+.invalid {
+    color: #666;
+}
+
+#match-status {
+    margin-top: 8px;
+    font-size: 0.85rem;
+}
+
+
+
+
+/* Contact Section */
+.contact-section {
+    padding: 2rem;
+    background: #f9f9f9;
+    text-align: center;
+  }
+  
+  .contact-info p {
+    margin: 0.5rem 0;
+    color: #444;
+  }
+  
+  /* Form Styling */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.3s;
+  }
+  
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: #2a5d37;
+    outline: none;
+  }
+  
+  .contact-form button.btn {
+    padding: 0.9rem;
+    font-size: 1rem;
+    background-color: #2a5d37;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .contact-form button.btn:hover {
+    background-color: #f1c40f;
+    color:#2a5d37;
+  }
+  
+  /* Popup Styling */
+  .close-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  
+  .close-icon:hover {
+    color: #f44336;
+  }
+  
+  .popup {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .popup-content {
+    position: relative;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .popup-content p {
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 0.5rem;
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .popup-content .btn {
+    margin-top: 1rem;
+    background-color: #28a745;
+  }
+  
+  .success-icon {
+    font-size: 3rem;
+    color: #28a745;
+  }
+  
+  /* Animation */
+  @keyframes fadeIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
