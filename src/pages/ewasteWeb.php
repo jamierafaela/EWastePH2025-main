@@ -1,5 +1,7 @@
 <?php
-//db
+//=====================================================
+// DATABASE CONNECTION
+//=====================================================
 $conn = new mysqli("localhost", "root", "", "ewaste_db");
 
 if ($conn->connect_error) {
@@ -9,45 +11,21 @@ if ($conn->connect_error) {
 $sql = "SELECT * FROM products ORDER BY product_id DESC";
 $result = $conn->query($sql);
 
-
+//=====================================================
+// SESSION MANAGEMENT
+//=====================================================
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $justLoggedIn = false;
-
 
 if (isset($_SESSION['just_logged_in']) && $_SESSION['just_logged_in'] === true) {
     $justLoggedIn = true;
     $_SESSION['just_logged_in'] = false;
 }
 
-// remember me
-if (!$isLoggedIn && isset($_COOKIE['remember'])) {
-    if (strpos($_COOKIE['remember'], ':') !== false) {
-        list($selector, $token) = explode(':', $_COOKIE['remember']);
-
-        $stmt = $conn->prepare("SELECT * FROM auth_tokens WHERE selector = ? AND expires > ?");
-        $now = time();
-        $stmt->bind_param("si", $selector, $now);
-        $stmt->execute();
-        $result_token = $stmt->get_result();
-
-        if ($result_token && $row = $result_token->fetch_assoc()) {
-            if (password_verify($token, $row['token'])) {
-                // Valid token, log the user in
-                $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
-                $stmt->bind_param("i", $row['user_id']);
-                $stmt->execute();
-                $user_result = $stmt->get_result();
-
-                if ($user_result && $user = $user_result->fetch_assoc()) {
-                    $_SESSION['user_id'] = $user['user_id'];
-                    $_SESSION['full_name'] = $user['full_name'];
-                    $isLoggedIn = true;
-                }
-            }
-        }
-    }
-}
+// CSRF token generation
+$csrf_token = bin2hex(random_bytes(32));
+$_SESSION['csrf_token'] = $csrf_token;
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +42,6 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
 
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- Fonts -->
@@ -73,215 +50,23 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
 
     <!-- JavaScript -->
     <script defer src="../../src/scripts/ewasteWeb.js"></script>
-</head>
-
-<style>
-    .login-popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .login-popup.show {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .login-popup-content {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        max-width: 400px;
-        width: 90%;
-        position: relative;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        transform: translateY(-20px);
-        transition: transform 0.3s ease;
-    }
-
-    .login-popup.show .login-popup-content {
-        transform: translateY(0);
-    }
-
-    .login-popup h2 {
-        color: #2e7d32;
-        margin-top: 0;
-        font-size: 24px;
-    }
-
-    .login-popup p {
-        margin-bottom: 20px;
-        font-size: 16px;
-    }
-
-    .login-popup-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-size: 24px;
-        cursor: pointer;
-        color: #666;
-        transition: color 0.2s;
-    }
-
-    .login-popup-close:hover {
-        color: #000;
-    }
-
-    .login-popup-button {
-        background-color: #2e7d32;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .login-popup-button:hover {
-        background-color: #1b5e20;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-
-    .password-container {
-        position: relative;
-    }
-
-    .password-container input {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-
-    .toggle-password {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        user-select: none;
-        background: none;
-        border: none;
-        color: #666;
-    }
-
-    .requirements {
-        margin-top: 10px;
-        font-size: 0.9em;
-    }
-
-    .requirement {
-        margin-bottom: 5px;
-        color: #666;
-    }
-
-    .requirement.valid {
-        color: green;
-    }
-
-    .requirement.invalid {
-        color: red;
-    }
-
-    .requirement:before {
-        content: "❌ ";
-    }
-
-    .requirement.valid:before {
-        content: "✅ ";
-    }
-
-    .error-message {
-        color: red;
-        font-size: 0.9em;
-        margin-top: 5px;
-        display: none;
-    }
-
-    button[type="submit"] {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    button[type="submit"]:hover {
-        background-color: #45a049;
-    }
-
-    button[type="submit"]:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-    }
-
-    .password-field {
-        position: relative;
-    }
-
-    .toggle-password {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        color: #666;
-        background: none;
-        border: none;
-        padding: 5px;
-    }
-
-    .password-requirements {
-        margin-top: 10px;
-        font-size: 0.9rem;
-        color: #666;
-    }
-
-    .requirements-list {
-        list-style-type: none;
-        padding-left: 5px;
-        margin-top: 8px;
-    }
-
-    .requirements-list li {
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-        font-size: 0.85rem;
-    }
-
-    .hidden {
-        display: none;
-    }
     
-</style>
+    <!-- Inline Styles -->
+    <style>
+        /* Valid requirement styling */
+.requirements-list li.valid {
+    color: #4caf50;
+}
+
+/* Invalid requirement styling */
+.requirements-list li.invalid {
+    color: #666;
+}
+    </style>
+</head>
  
 <body>
-    <!-- Log in popup -->
+    <!-- Login Popup -->
     <div id="loginPopup" class="login-popup">
         <div class="login-popup-content">
             <span class="login-popup-close">&times;</span>
@@ -290,6 +75,7 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
             <button class="login-popup-button">Continue</button>
         </div>
     </div>
+
     <!-- Header and Navigation -->
     <header>
         <nav class="navbar">
@@ -314,7 +100,7 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
     </header>
 
     <!-- Main Content -->
-
+    
     <!-- Home Section -->
     <section id="home" class="section home-section">
         <div class="text-box">
@@ -433,17 +219,13 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
 
         <!-- Popup -->
         <div id="popup" class="popup">
-        <div class="popup-content">
-            <button id="closePopup" class="close-icon" aria-label="Close popup">&times;</button>
-            <i class="fas fa-check-circle success-icon"></i>
-            <p>Your message has been sent successfully!</p>
+            <div class="popup-content">
+                <button id="closePopup" class="close-icon" aria-label="Close popup">&times;</button>
+                <i class="fas fa-check-circle success-icon"></i>
+                <p>Your message has been sent successfully!</p>
+            </div>
         </div>
-        </div>
-
-</section>
-
-
-
+    </section>
 
     <!-- Shop Section -->
     <section id="shop" class="section shop-section">
@@ -477,7 +259,7 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
         </form>
     </section>
 
-    <!-- Profile Section -->
+    <!-- Login/Profile Section -->
     <?php if (!isset($_SESSION['user_id'])): ?>
         <section id="loginSection" class="section profile-section">
             <section class="profile-contents">
@@ -499,10 +281,6 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
                     <div id="loginForm">
                         <form action="login.php" method="POST">
                             <input type="hidden" name="signin" value="1">
-                            <?php
-                            $csrf_token = bin2hex(random_bytes(32));
-                            $_SESSION['csrf_token'] = $csrf_token;
-                            ?>
                             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                             <?php
                             if (isset($_SESSION['login_error'])) {
@@ -527,84 +305,81 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
                                     </div>
                                 </li>
                                 <li>
-                                    <label>
-                                        <input type="checkbox" name="remember_me"> Remember me
-                                    </label>
-                                </li>
-                                <li>
                                     <button type="submit" class="btn">Log in</button>
                                 </li>
-
                             </ul>
                         </form>
                     </div>
+
                     <!-- Signup Form -->
                     <div id="signupForm" class="hidden">
-                    <?php
-                    // Display signup error if it exists
-                    if (isset($_SESSION['signup_error'])) {
-                        echo '<div class="error-message" style="display: block; color: red; margin-bottom: 15px;">' . 
-                            htmlspecialchars($_SESSION['signup_error']) . 
-                        '</div>';
-                        unset($_SESSION['signup_error']);
-                    }
-                    ?>
+                        <?php
+                            // Display signup error if it exists
+                            if (isset($_SESSION['signup_error'])) {
+                                echo '<div class="error-message" style="display: block; color: red; margin-bottom: 15px;">' . 
+                                    htmlspecialchars($_SESSION['signup_error']) . 
+                                '</div>';
+                                unset($_SESSION['signup_error']);
+                            }
+                        ?>
                         <form action="signup.php" method="POST">
                             <input type="hidden" name="signup" value="1">
-                            <?php
-                            // Add CSRF token to signup form too
-                            if (!isset($csrf_token)) {
-                                $csrf_token = bin2hex(random_bytes(32));
-                                $_SESSION['csrf_token'] = $csrf_token;
-                            }
-                            ?>
                             <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
                             <ul>
-                                <li>
-                                    <label>Name:</label>
-                                    <input type="text" id="full_name" name="full_name" placeholder="Enter your name" required>
-                                </li>
-                                <li>
-                                    <label>Email:</label>
-                                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
-                                </li>
-                                <li>
-                                <div class="form-group">
-                                    <label for="signup-password">Password: </label>
-                                    <div class="password-container">
-                                        <input type="password" id="signup-password" name="password" placeholder="Enter your password" required>
-                                        <button type="button" class="toggle-password" data-target="signup-password">
-                                            <i class="far fa-eye-slash"></i>
-                                        </button>
-                                    </div>
-
-                                    <!-- This section must be placed directly below the password input -->
-                                    <div class="password-requirements">
-                                        <p>Password must contain:</p>
-                                        <ul class="requirements-list">
-                                            <li id="length" class="invalid"><i class="fas fa-times-circle"></i>At least 8 characters</li>
-                                            <li id="uppercase" class="invalid"><i class="fas fa-times-circle"></i>At least one uppercase letter</li>
-                                            <li id="lowercase" class="invalid"><i class="fas fa-times-circle"></i>At least one lowercase letter</li>
-                                            <li id="number" class="invalid"><i class="fas fa-times-circle"></i>At least one number</li>
-                                        </ul>
-                                    </div>
+                                <div class="input-row">
+                                    <li>
+                                        <label>Name:</label>
+                                        <input type="text" id="full_name" name="full_name" placeholder="Enter your name" required>
+                                    </li>
+                                    <li>
+                                        <label>Email:</label>
+                                        <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                                    </li>
                                 </div>
 
-                                </li>
+                                <div class="input-row">
+                                    <li>
 
-                                <li>
-                                    <label>Confirm Password:</label>
-                                    <div class="password-field">
-                                        <input type="password" id="confirm-password" name="confirm_password" placeholder="Re-enter your password" required>
-                                        <button type="button" class="toggle-password" data-target="confirm-password">
-                                            <i class="far fa-eye-slash"></i>
-                                        </button>
-                                    </div>
-                                    <p id="match-status" class="password-requirements"></p>
-                                </li>
-                                <li>
-                                    <button type="submit" class="btn" id="signup-btn" disabled>Sign up</button>
-                                </li>
+                                                <label>Password:</label>
+                                                <div class="password-container">
+                                                    <input type="password" id="signup-password" name="password" placeholder="Enter your password" required>
+                                                    <button type="button" class="toggle-password" data-target="signup-password">
+                                                        <i class="far fa-eye-slash"></i>
+                                                    </button>
+                                                </div>
+
+                                                <div class="password-requirements">
+                                                    <p>Password must contain:</p>
+                                                    <ul class="requirements-list">
+                                                        <li id="length" class="invalid"><i class="fas fa-times-circle"></i> At least 8 characters</li>
+                                                        <li id="uppercase" class="invalid"><i class="fas fa-times-circle"></i> At least one uppercase letter</li>
+                                                        <li id="lowercase" class="invalid"><i class="fas fa-times-circle"></i> At least one lowercase letter</li>
+                                                        <li id="number" class="invalid"><i class="fas fa-times-circle"></i> At least one number</li>
+                                                    </ul>
+                                                </div>
+                                    </li>
+                                    <li>
+                                    
+
+                                            <!-- Confirm Password Field and Match Status -->
+                                           
+                                                <label>Confirm Password:</label>
+                                                <div class="password-field">
+                                                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Re-enter your password" required>
+                                                    <button type="button" class="toggle-password" data-target="confirm-password">
+                                                        <i class="far fa-eye-slash"></i>
+                                                    </button>
+                                                </div>
+                                                <p id="match-status" class="password-requirements"></p>
+                                         
+                                        </div>
+                                    </li>
+
+                                    <li style="text-align: center; margin-top: 30px;">
+                                        <button type="submit" class="btn" id="signup-btn" disabled>Sign up</button>
+                                    </li>
+                                </div>
+
                             </ul>
                         </form>
                     </div>
@@ -631,42 +406,46 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
             <a href="https://www.instagram.com/yourprofile" target="_blank"><i class="fab fa-instagram"></i></a>
         </div>
     </footer>
+    
 
     <script>
-        // script for login
-        const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
+            // script for login
+            const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
 
-        function handleAction(action) {
-            if (isLoggedIn) {
-                if (action === 'buy') {
-                    window.location.href = "ewasteShop.php";
-                } else if (action === 'sell') {
-                    window.location.href = "sell.php";
+            function handleAction(action) {
+                if (isLoggedIn) {
+
+                    if (action === 'buy') {
+                        window.location.href = "ewasteShop.php";
+                    } else if (action === 'sell') {
+                        window.location.href = "sell.php";
+                    }
+                } else {
+
+                    document.getElementById("loginSection").scrollIntoView({
+                        behavior: "smooth"
+                    });
                 }
-            } else {
-                document.getElementById("loginSection").scrollIntoView({
-                    behavior: "smooth"
-                });
             }
-        }
-
+ 
         // Login popup 
         document.addEventListener('DOMContentLoaded', function() {
             const justLoggedIn = <?php echo $justLoggedIn ? 'true' : 'false'; ?>;
             const loginPopup = document.getElementById('loginPopup');
-
+            
             if (justLoggedIn && loginPopup) {
+                
                 setTimeout(function() {
                     loginPopup.classList.add('show');
                 }, 250);
-
+                
                 const closeBtn = loginPopup.querySelector('.login-popup-close');
                 if (closeBtn) {
                     closeBtn.addEventListener('click', function() {
                         loginPopup.classList.remove('show');
                     });
                 }
-
+                
                 const continueBtn = loginPopup.querySelector('.login-popup-button');
                 if (continueBtn) {
                     continueBtn.addEventListener('click', function() {
@@ -680,228 +459,128 @@ if (!$isLoggedIn && isset($_COOKIE['remember'])) {
                     }
                 });
             }
-
-            // scroll for signup login
-            const toggleForm = document.getElementById('toggleForm');
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const formTitle = document.getElementById('formTitle');
-            const formToggleText = document.getElementById('formToggleText');
-
-
-            function toggleFormFunc(e) {
-                e.preventDefault();
-                
-                if (loginForm.classList.contains('hidden')) {
- 
-                    loginForm.classList.remove('hidden');
-                    signupForm.classList.add('hidden');
-                    formTitle.textContent = 'Log in';
-                    formToggleText.innerHTML = 'New to site? <a href="#" id="toggleForm">Sign up</a>';
-                } else {
-
-                    loginForm.classList.add('hidden');
-                    signupForm.classList.remove('hidden');
-                    formTitle.textContent = 'Sign up';
-                    formToggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Log in</a>';
-                }
-                
-
-                document.getElementById('toggleForm').addEventListener('click', toggleFormFunc);
-            }
-
-
-            if (toggleForm) {
-                toggleForm.addEventListener('click', toggleFormFunc);
-            }
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const hasSignupError = <?php echo isset($_SESSION['signup_error']) ? 'true' : 'false'; ?>;
-            
-            if (urlParams.has('signup_error') || hasSignupError) {
-                if (loginForm && signupForm) {
-                    loginForm.classList.add('hidden');
-                    signupForm.classList.remove('hidden');
-                    formTitle.textContent = 'Sign up';
-                    formToggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Log in</a>';
-                    
-                    document.getElementById('toggleForm').addEventListener('click', toggleFormFunc);
-                }
-            }
-
-            if (window.location.hash === '#signupForm') {
-                document.getElementById("loginSection").scrollIntoView({
-                    behavior: "smooth"
-                });
-                if (loginForm && signupForm) {
-                    loginForm.classList.add('hidden');
-                    signupForm.classList.remove('hidden');
-                    formTitle.textContent = 'Sign up';
-                    formToggleText.innerHTML = 'Already have an account? <a href="#" id="toggleForm">Log in</a>';
-                    
-                    document.getElementById('toggleForm').addEventListener('click', toggleFormFunc);
-                }
-            }
-
-
-            document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-                toggle.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
-
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                    }
-                });
-            });
-
-            document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-                toggle.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
-
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                    }
-                });
-            });
-
-            const passwordInput = document.getElementById('signup-password');
-            const confirmPasswordInput = document.getElementById('confirm-password');
-            const signupBtn = document.getElementById('signup-btn');
-            const matchStatus = document.getElementById('match-status');
-
-            function validatePassword() {
-                const password = passwordInput.value;
-                let valid = true;
-
-                // Check length
-                const lengthElement = document.getElementById('length');
-                if (lengthElement) {
-                    if (password.length >= 8) {
-                        lengthElement.className = 'valid';
-                        lengthElement.querySelector('i').className = 'fas fa-check-circle';
-                    } else {
-                        lengthElement.className = 'invalid';
-                        lengthElement.querySelector('i').className = 'fas fa-times-circle';
-                        valid = false;
-                    }
-                }
-
-                // Check uppercase
-                const uppercaseElement = document.getElementById('uppercase');
-                if (uppercaseElement) {
-                    if (/[A-Z]/.test(password)) {
-                        uppercaseElement.className = 'valid';
-                        uppercaseElement.querySelector('i').className = 'fas fa-check-circle';
-                    } else {
-                        uppercaseElement.className = 'invalid';
-                        uppercaseElement.querySelector('i').className = 'fas fa-times-circle';
-                        valid = false;
-                    }
-                }
-
-                // Check lowercase
-                const lowercaseElement = document.getElementById('lowercase');
-                if (lowercaseElement) {
-                    if (/[a-z]/.test(password)) {
-                        lowercaseElement.className = 'valid';
-                        lowercaseElement.querySelector('i').className = 'fas fa-check-circle';
-                    } else {
-                        lowercaseElement.className = 'invalid';
-                        lowercaseElement.className = 'invalid';
-                        lowercaseElement.querySelector('i').className = 'fas fa-times-circle';
-                        valid = false;
-                    }
-                }
-
-                // Check number
-                const numberElement = document.getElementById('number');
-                if (numberElement) {
-                    if (/[0-9]/.test(password)) {
-                        numberElement.className = 'valid';
-                        numberElement.querySelector('i').className = 'fas fa-check-circle';
-                    } else {
-                        numberElement.className = 'invalid';
-                        numberElement.querySelector('i').className = 'fas fa-times-circle';
-                        valid = false;
-                    }
-                }
-
-                // Check if passwords match
-                if (password && confirmPasswordInput && confirmPasswordInput.value) {
-                    if (password === confirmPasswordInput.value) {
-                        matchStatus.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match!';
-                        matchStatus.style.color = "#4caf50";
-                    } else {
-                        matchStatus.innerHTML = '<i class="fas fa-times-circle"></i> Passwords do not match!';
-                        matchStatus.style.color = "#f44336";
-                        valid = false;
-                    }
-                } else {
-                    matchStatus.textContent = "";
-                }
-
-                if (signupBtn) {
-                    signupBtn.disabled = !valid || !confirmPasswordInput || !confirmPasswordInput.value || password !== confirmPasswordInput.value;
-                }
-            }
-
-            if (passwordInput) {
-                passwordInput.addEventListener('input', validatePassword);
-            }
-            if (confirmPasswordInput) {
-                confirmPasswordInput.addEventListener('input', validatePassword);
-            }
-
-            const signupFormElement = document.querySelector('#signupForm form');
-            if (signupFormElement) {
-                signupFormElement.addEventListener('submit', function(event) {
-                    const password = passwordInput.value;
-
-                    if (password.length < 8 || !(/[A-Z]/.test(password)) ||
-                        !(/[a-z]/.test(password)) || !(/[0-9]/.test(password))) {
-                        alert('Please ensure your password meets all requirements');
-                        event.preventDefault();
-                    } else if (password !== confirmPasswordInput.value) {
-                        alert('Password and confirmation do not match');
-                        event.preventDefault();
-                    }
-                });
-            }
         });
 
+        //Password toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-password').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                const icon = this.querySelector('i');
 
-        //message
-document.getElementById("guestContactForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                }
+            });
+        });
 
-  // Simulate email sending (no real backend here)
-  // You would need to connect to backend or email API like EmailJS for real emails
-  setTimeout(function () {
-    document.getElementById("popup").style.display = "flex";
-  }, 500); // Simulate delay
-});
+        // Password validation for signup
+        const passwordInput = document.getElementById('signup-password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const signupBtn = document.getElementById('signup-btn');
+        const matchStatus = document.getElementById('match-status');
 
-document.getElementById("closePopup").addEventListener("click", function () {
-  document.getElementById("popup").style.display = "none";
-});
+        function validatePassword() {
+            const password = passwordInput.value;
+            let valid = true;
 
-</script>
+            // Check length
+            const lengthElement = document.getElementById('length');
+            if (password.length >= 8) {
+                lengthElement.className = 'valid';
+                lengthElement.querySelector('i').className = 'fas fa-check-circle';
+            } else {
+                lengthElement.className = 'invalid';
+                lengthElement.querySelector('i').className = 'fas fa-times-circle';
+                valid = false;
+            }
+
+            // Check uppercase
+            const uppercaseElement = document.getElementById('uppercase');
+            if (/[A-Z]/.test(password)) {
+                uppercaseElement.className = 'valid';
+                uppercaseElement.querySelector('i').className = 'fas fa-check-circle';
+            } else {
+                uppercaseElement.className = 'invalid';
+                uppercaseElement.querySelector('i').className = 'fas fa-times-circle';
+                valid = false;
+            }
+
+            // Check lowercase
+            const lowercaseElement = document.getElementById('lowercase');
+            if (/[a-z]/.test(password)) {
+                lowercaseElement.className = 'valid';
+                lowercaseElement.querySelector('i').className = 'fas fa-check-circle';
+            } else {
+                lowercaseElement.className = 'invalid';
+                lowercaseElement.querySelector('i').className = 'fas fa-times-circle';
+                valid = false;
+            }
+
+            // Check number
+            const numberElement = document.getElementById('number');
+            if (/[0-9]/.test(password)) {
+                numberElement.className = 'valid';
+                numberElement.querySelector('i').className = 'fas fa-check-circle';
+            } else {
+                numberElement.className = 'invalid';
+                numberElement.querySelector('i').className = 'fas fa-times-circle';
+                valid = false;
+            }
+
+            // Check if passwords match
+            if (password && confirmPasswordInput.value) {
+                if (password === confirmPasswordInput.value) {
+                    matchStatus.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match!';
+                    matchStatus.style.color = "#4caf50";
+                } else {
+                    matchStatus.innerHTML = '<i class="fas fa-times-circle"></i> Passwords do not match!';
+                    matchStatus.style.color = "#f44336";
+                    valid = false;
+                }
+            } else {
+                matchStatus.textContent = "";
+            }
+
+            // Enable/disable sign up button based on validation
+            signupBtn.disabled = !valid || !confirmPasswordInput.value || password !== confirmPasswordInput.value;
+        }
+
+        // Add event listeners for password validation
+        if (passwordInput) {
+            passwordInput.addEventListener('input', validatePassword);
+        }
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', validatePassword);
+        }
+
+        // Form submission validation
+        const signupForm = document.querySelector('#signupForm form');
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(event) {
+                const password = passwordInput.value;
+
+                if (password.length < 8 || !(/[A-Z]/.test(password)) || 
+                    !(/[a-z]/.test(password)) || !(/[0-9]/.test(password))) {
+                    alert('Please ensure your password meets all requirements');
+                    event.preventDefault();
+                } else if (password !== confirmPasswordInput.value) {
+                    alert('Password and confirmation do not match');
+                    event.preventDefault();
+                }
+            });
+        }
+    });
+           
+        </script>
+
 </body>
-
 </html>

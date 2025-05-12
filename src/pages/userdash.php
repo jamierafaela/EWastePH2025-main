@@ -218,6 +218,346 @@ $conn->close();
     <title>E-WastePH User Dashboard</title>
     <link rel="stylesheet" href="../styles/userDash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        .activity-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .activity-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity-list li:last-child {
+            border-bottom: none;
+        }
+
+        .activity-type {
+            display: inline-flex;
+            align-items: center;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .activity-type.listed {
+            color: #4CAF50;
+        }
+
+        .activity-type.purchased {
+            color: #2196F3;
+        }
+
+        .activity-date {
+            color: #777;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .product-name {
+            font-weight: 500;
+        }
+
+        .listings-container {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .listings-container.active {
+            display: block;
+        }
+
+        .listings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .listings-table th,
+        .listings-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .listings-table th {
+            background-color: #f5f5f5;
+        }
+
+        .listings-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .listings-action {
+            margin: 5px 10px 5px 0;
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .listings-action:hover {
+            background-color: rgb(20, 123, 24);
+            color: #f0f0f0;
+        }
+
+        .listings-action.active {
+            background-color: rgb(20, 123, 24);
+            color: white;
+        }
+
+        .action-btn {
+            padding: 5px 8px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.85em;
+            margin-right: 5px;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+        }
+
+        .notification-message {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+
+        .error-message {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+
+
+        .notification-message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .success-message:before {
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .error-message:before {
+            content: "\f00d";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.2em;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #aaa;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 10px 0;
+        }
+
+        .modal-buttons {
+            text-align: right;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .modal-cancel {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        .modal-delete {
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .modal-delete:hover {
+            background-color: #e53935;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .status-badge.approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .registration-success-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .registration-success-container1 {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .success-message {
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        .registration-success-container1 a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .close-popup {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f44336;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+    </style>
 </head>
 
 <body>
@@ -252,7 +592,9 @@ $conn->close();
                     </div>
                     <div class="profile-details">
                         <h2 class="username"> <?php echo htmlspecialchars($userDetails['full_name'] ?? 'Guest'); ?> </h2>
-                        <button id="logoutBtn" class="logout-btn" onclick="window.location.href='logout.php'">Log out</button>
+                        <a href="#" class="profile-link">Edit Profile</a>
+                        <a href="#" class="profile-link">Change Password</a>
+                        <button id="logoutBtn" class="btn" onclick="window.location.href='logout.php'">Log out</button>
                     </div>
                 </div>
 
@@ -271,7 +613,7 @@ $conn->close();
                     <div class="sidebar-menu-section">
                         <h3 class="section-title">Settings</h3>
                         <a href="account_settings.php" class="sidebar-link">Account Settings<i class="fas fa-cog"></i></a>
-                        <a href="editpass.php   " class="sidebar-link">Privacy Settings<i class="fas fa-shield-alt"></i></a>
+                        <a href="privacy_settings.php   " class="sidebar-link">Privacy Settings<i class="fas fa-shield-alt"></i></a>
                     </div>
                 </div>
             </aside>

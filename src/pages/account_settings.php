@@ -67,6 +67,161 @@ if ($isLoggedIn) {
 <head>
     <meta charset="UTF-8">
     <title>Account Settings</title>
+    <style>
+        /* Reset & Base Styles */
+/* Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #e8f5e9; /* Soft green background */
+  color: #333;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card-style Container */
+.account-settings {
+  width: 800px;
+  background-color: white;
+  padding: 3rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-left: 10px solid #2e7d32;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Head */
+.account-settings h2 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+/* Form layout */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Labels & Inputs */
+label {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: #2e7d32;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="file"],
+select {
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background-color: #fefefe;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+select:focus {
+  border-color: #fbc02d; /* yellow highlight */
+  outline: none;
+}
+
+/* Profile Picture Styling */
+.column img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #2e7d32;
+  margin-top: 0.5rem;
+}
+
+.profile-image-placeholder {
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* Buttons */
+input[type="submit"],
+a.btn {
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  width: fit-content;
+}
+
+input[type="submit"] {
+  background-color: #2e7d32;
+  color: white;
+}
+
+input[type="submit"]:hover {
+  background-color: #1b5e20;
+}
+
+a.btn {
+  background-color: #fbc02d;
+  color: #333;
+  margin-left: 1rem;
+}
+
+a.btn:hover {
+  background-color: #f9a825;
+}
+
+/* Status Messages */
+p {
+  font-weight: bold;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+p[style*='color: green'] {
+  color: #2e7d32 !important;
+}
+
+p[style*='color: red'] {
+  color: #c62828 !important;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .account-settings {
+    width: 90%;
+    padding: 2rem;
+  }
+}
+
+</style>
 </head>
 <body>
     <div class="account-settings">

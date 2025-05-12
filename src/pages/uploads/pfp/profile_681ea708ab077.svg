@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200">
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="#f5f5f5"/>
+  
+  <!-- Listing Management Header -->
+  <rect x="50" y="50" width="1100" height="80" fill="#e0e0e0" rx="5" ry="5"/>
+  <text x="575" y="95" font-family="Arial" font-size="24" text-anchor="middle" fill="#333333">Listing Management</text>
+  
+  <!-- Tab Navigation -->
+  <rect x="50" y="150" width="1100" height="60" fill="#ffffff" rx="5" ry="5" stroke="#cccccc" stroke-width="2"/>
+  <rect x="50" y="150" width="366" height="60" fill="#4caf50" rx="5" ry="5"/>
+  <text x="233" y="187" font-family="Arial" font-size="18" text-anchor="middle" fill="#ffffff">Active Listings</text>
+  <text x="600" y="187" font-family="Arial" font-size="18" text-anchor="middle" fill="#333333">Add New Listing</text>
+  <text x="966" y="187" font-family="Arial" font-size="18" text-anchor="middle" fill="#333333">Sold Listings</text>
+  
+  <!-- Active Listings Content -->
+  <rect x="50" y="230" width="1100" height="920" fill="#ffffff" rx="5" ry="5" stroke="#cccccc" stroke-width="2"/>
+  
+  <!-- Search and Filter -->
+  <rect x="100" y="270" width="700" height="50" fill="#f0f0f0" rx="5" ry="5"/>
+  <text x="120" y="300" font-family="Arial" font-size="14" fill="#999999">Search listings...</text>
+  
+  <rect x="820" y="270" width="150" height="50" fill="#f0f0f0" rx="5" ry="5"/>
+  <text x="895" y="300" font-family="Arial" font-size="14" text-anchor="middle" fill="#333333">Filter ▼</text>
+  
+  <rect x="990" y="270" width="150" height="50" fill="#f0f0f0" rx="5" ry="5"/>
+  <text x="1065" y="300" font-family="Arial" font-size="14" text-anchor="middle" fill="#333333">Sort By ▼</text>
+  
+  <!-- Listing Items -->
+  <rect x="100" y="350" width="1000" height="150" fill="#f0f0f0" rx="5" ry="5"/>
+  <rect x="120" y="370" width="110" height="110" fill="#e0e0e0"/>
+  <text x="175" y="425" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">[Image]</text>
+  
+  <text x="250" y="390" font-family="Arial" font-size="18" font-weight="bold" fill="#333333">Handcrafted Wooden Coffee Table</text>
+  <text x="250" y="420" font-family="Arial" font-size="16" fill="#333333">Category: Furniture</text>
+  <text x="250" y="450" font-family="Arial" font-size="16" fill="#333333">Condition: Excellent</text>
+  <text x="250" y="480" font-family="Arial" font-size="18" font-weight="bold" fill="#4caf50">P5,500.00</text>
+  
+  <rect x="900" y="370" width="90" height="40" fill="#4caf50" rx="5" ry="5"/>
+  <text x="945" y="395" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Edit</text>
+  
+  <rect x="900" y="420" width="90" height="40" fill="#f44336" rx="5" ry="5"/>
+  <text x="945" y="445" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Delete</text>
+  
+  <rect x="100" y="520" width="1000" height="150" fill="#f0f0f0" rx="5" ry="5"/>
+  <rect x="120" y="540" width="110" height="110" fill="#e0e0e0"/>
+  <text x="175" y="595" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">[Image]</text>
+  
+  <text x="250" y="560" font-family="Arial" font-size="18" font-weight="bold" fill="#333333">Vintage Leather Messenger Bag</text>
+  <text x="250" y="590" font-family="Arial" font-size="16" fill="#333333">Category: Accessories</text>
+  <text x="250" y="620" font-family="Arial" font-size="16" fill="#333333">Condition: Good</text>
+  <text x="250" y="650" font-family="Arial" font-size="18" font-weight="bold" fill="#4caf50">P2,800.00</text>
+  
+  <rect x="900" y="540" width="90" height="40" fill="#4caf50" rx="5" ry="5"/>
+  <text x="945" y="565" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Edit</text>
+  
+  <rect x="900" y="590" width="90" height="40" fill="#f44336" rx="5" ry="5"/>
+  <text x="945" y="615" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Delete</text>
+  
+  <rect x="100" y="690" width="1000" height="150" fill="#f0f0f0" rx="5" ry="5"/>
+  <rect x="120" y="710" width="110" height="110" fill="#e0e0e0"/>
+  <text x="175" y="765" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">[Image]</text>
+  
+  <text x="250" y="730" font-family="Arial" font-size="18" font-weight="bold" fill="#333333">Hand-painted Ceramic Dinner Set</text>
+  <text x="250" y="760" font-family="Arial" font-size="16" fill="#333333">Category: Home & Kitchen</text>
+  <text x="250" y="790" font-family="Arial" font-size="16" fill="#333333">Condition: New</text>
+  <text x="250" y="820" font-family="Arial" font-size="18" font-weight="bold" fill="#4caf50">P3,200.00</text>
+  
+  <rect x="900" y="710" width="90" height="40" fill="#4caf50" rx="5" ry="5"/>
+  <text x="945" y="735" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Edit</text>
+  
+  <rect x="900" y="760" width="90" height="40" fill="#f44336" rx="5" ry="5"/>
+  <text x="945" y="785" font-family="Arial" font-size="14" text-anchor="middle" fill="#ffffff">Delete</text>
+  
+  <!-- Pagination -->
+  <rect x="450" y="1020" width="300" height="50" fill="#ffffff" rx="5" ry="5" stroke="#cccccc" stroke-width="2"/>
+  <text x="490" y="1050" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">◀</text>
+  <text x="550" y="1050" font-family="Arial" font-size="16" text-anchor="middle" fill="#ffffff" stroke="#4caf50" stroke-width="2">1</text>
+  <text x="600" y="1050" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">2</text>
+  <text x="650" y="1050" font-family="Arial" font-size="16" text-anchor="middle" fill="#333333">3</text>
+  <text x="710" y="1050" font-family="Arial" font-size="16" text-anchor="middle" fill="#666666">▶</text>
+</svg>

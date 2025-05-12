@@ -14,7 +14,8 @@ body {
     overflow-x: hidden;
     margin: 0;
     padding: 0;
-    background-color: #f5f5f5;
+    background: linear-gradient(135deg, #c3d8cc, #ecf8ed, #e8f5e9);
+
 }
 
 
@@ -186,7 +187,6 @@ section {
 
 }
 .shop-section {
-    background: linear-gradient(#e8f5e9, #c8e6c9);
     padding: 40px 5%;
     text-align: center;
     padding: 100px 50px;
@@ -313,7 +313,6 @@ section {
     color: #2a5d37;
 }
 /* FAQ Section */
-
 .faq {
     display: flex;
     flex-wrap: wrap;
@@ -414,8 +413,79 @@ section {
     max-height: 300px;
 }
 
+
+
 /* Contact Section, in the login.css */
 
+/* Contact Section */
+.contact-section {
+    padding: 10rem;
+    text-align: center;
+    padding-bottom: 10rem;
+  }
+  
+  .contact-info p {
+    margin: 0.5rem 0;
+    color: #444;
+    text-align: center;
+  }
+  h2{
+    font-size: 2.5rem;
+    color: #2a5d37;
+    margin-bottom: 20px;
+  }
+  
+  /* Form Styling */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 500px;
+    margin: 2rem auto;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.3s;
+  }
+  
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: #999;
+    font-style: italic;
+  }
+  
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: #2a5d37;
+    outline: none;
+  }
+  
+  .contact-form button.btn {
+    padding: 0.9rem;
+    font-size: 1rem;
+    background-color: #2a5d37;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .contact-form button.btn:hover {
+    background-color: #f1c40f;
+    color:#2a5d37;
+  }
+  
+
+/* Back to Top Button */
 /* Back to Top Button */
 #upButton {
     position: fixed;
@@ -488,13 +558,10 @@ section {
 }
 /*preuserdashh*/
 
-
 /* Profile Section */
-.profile-contents h2 {
-    cursor: default;
-    user-select: none;
-}
-
+/* ----------------------
+   Profile Section Styling
+--------------------------*/
 .profile-section {
     background: linear-gradient(to bottom, rgba(25, 10, 10, 0.8), rgba(42, 93, 55, 0.7)), 
     url('/EWastePH/Public/images/tvbg_enhanced.jpg') no-repeat center center/cover;
@@ -502,6 +569,8 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .profile-contents {
@@ -517,51 +586,21 @@ section {
 
 .profile-contents h2 {
     font-family: "Jersey 25", sans-serif;
-    font-size: 30rem;
+    font-size: 3rem;
+    cursor: default;
+    user-select: none;
 }
 
-.continueAcc ul {
-    list-style: none;
-    color: #e5e8e8;
-    padding: 0;
-    margin: 0;
-}
-
+/* ----------------------
+   Login & Signup Forms
+--------------------------*/
 .signupForm {
     background: linear-gradient(to bottom, #2a5d37b3, #190a0acc), 
     url('/EWastePH/Public/images/tvbg_enhanced.jpg') no-repeat center center/cover !important;
 }
 
-.continueAcc ul li {
-    display: flex;
-    flex-direction: column; /* Stack label + input */
-    align-items: flex-start;
-    gap: 5px;
-    margin: 12px 0;
-    width: 100%;
-    font-family: "DM Sans", sans-serif;
-}
-
-.profile-contents input {
-    width: 100%;
-    max-width: 16rem;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #D9D9D9;
-    box-shadow: inset 3px 2px 5px rgba(0, 0, 0, 0.251);
-    box-sizing: border-box;
-
-}
-
-.continueAcc label {
-    width: 100px;
-    text-align: right;
-}
-
 .logIn h2 {
-    font-size: 65px;
+    font-size: 3rem;
     color: #fff;
     text-align: center;
     margin-bottom: 20px;
@@ -583,7 +622,63 @@ section {
     text-decoration: underline;
 }
 
-.profile-contents .btn {
+/* ----------------------
+   Form Structure & Fields
+--------------------------*/
+.continueAcc ul {
+    list-style: none;
+    color: #e5e8e8;
+    padding: 0;
+    margin: 0;
+}
+
+.continueAcc ul li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    margin: 14px 0;
+    width: 100%;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.profile-contents input {
+    width: 100%;
+    max-width: 16rem;
+    padding: 12px;
+    margin-top: 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #D9D9D9;
+    box-shadow: inset 3px 2px 5px rgba(0, 0, 0, 0.251);
+    box-sizing: border-box;
+    border: none;
+}
+
+.continueAcc label {
+    width: 100%;
+    max-width: 16rem;
+    text-align: left;
+    font-weight: bold;
+    color: #e5e8e8;
+    font-family: "DM Sans", sans-serif;
+    padding-left: 4px;
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+
+/* ----------------------
+   Button Styling
+--------------------------*/
+.profile-contents .btn,
+button[type="submit"] {
     display: block;
     width: 100%;
     max-width: 16rem;
@@ -595,38 +690,259 @@ section {
     font-size: 18px;
     transition: background-color 0.3s;
     margin: 15px auto 0;
+    border: none;
 }
 
-.btn:hover {
+.profile-contents .btn:hover,
+button[type="submit"]:hover {
     background-color: #f1c40f;
     color: #2a5d37;
 }
 
-.password-requirements {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #e5e8e8;
-    background-color: rgba(0, 0, 0, 0.6);
-    padding-right: 10px;
-    border-radius: 5px;
-    padding: 8px;
+button[type="submit"]:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
 }
 
-.password-requirements ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+/* ----------------------
+   Input Rows & Field Groupings
+--------------------------*/
+.input-row,
+.password-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.input-row li,
+.password-row .password-field {
+    flex: 1 1 45%;
+    max-width: 16rem;
+    text-align: left;
+    justify-content: left;
+}
+
+.input-row input,
+.password-row input {
+    width: 100%;
+}
+
+.password-fields > div {
+    flex: 1;
+    min-width: 280px;
+}
+.password-fields label{
+    text-align: left;
+    color: aqua;
+    justify-content: left;
+   border: 1px solid aqua;
+   margin-right: 30px;
+}
+/* ----------------------
+   Password Field & Validation
+--------------------------*/
+.password-container,
+.password-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 16rem;
+    gap: 8px;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.password-requirements {
+    font-size: 13px;
+    font-style: italic;
+    color: #e5e8e8;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 8px 10px;
+    border-radius: 5px;
+    margin-top: 8px;
+    text-align: left;
+    max-width: 16rem;
 }
 
 .password-requirements li {
-    margin: 5px 0;
+    margin: 3px 0;
 }
 
+.requirements.valid {
+    color: green;
+}
+
+.requirements.invalid {
+    color: red;
+}
+
+.requirement:before {
+    content: "❌ ";
+}
+
+.requirements.valid:before {
+    content: "✅ ";
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #666;
+    padding: 5px;
+    user-select: none;
+}
+
+/* ----------------------
+   Error & Hidden State
+--------------------------*/
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: none;
+}
 
 .hidden {
     display: none;
 }
 
+/* ----------------------
+   Popup Styling
+--------------------------*/
+.login-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.login-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.login-popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.login-popup.show .login-popup-content {
+    transform: translateY(0);
+}
+
+.login-popup h2 {
+    color: #2e7d32;
+    margin-top: 0;
+    font-size: 24px;
+}
+
+.login-popup p {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.login-popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.2s;
+}
+
+.login-popup-close:hover {
+    color: #000;
+}
+
+.login-popup-button {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.login-popup-button:hover {
+    background-color: #1b5e20;
+}
+
+/* ----------------------
+   Responsive Design
+--------------------------*/
+@media (max-width: 768px) {
+    .profile-contents {
+        padding: 6vw;
+        width: 95%;
+        max-width: 90%;
+    }
+
+    .profile-contents h2,
+    .logIn h2 {
+        font-size: 2rem;
+    }
+
+    .input-row li,
+    .password-row .password-field,
+    .profile-contents input,
+    .continueAcc label,
+    .password-container,
+    .password-fields > div {
+        max-width: 100%;
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-section {
+        padding: 20px;
+    }
+
+    .profile-contents {
+        padding: 8vw;
+    }
+
+    .profile-contents h2,
+    .logIn h2 {
+        font-size: 1.8rem;
+    }
+
+    .logIn p {
+        font-size: 0.9rem;
+    }
+
+    .password-requirements {
+        font-size: 12px;
+    }
+}
 
 /*UserDAsh*/
 

@@ -175,6 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <link rel="stylesheet" href="../../src/styles/profileCompletion.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <script defer src="../../src/scripts/userDash.js"></script>
+
 </head>
 
 <body>
@@ -214,77 +215,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="modal">
           <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
             <div class="modal-body">
+              
               <p class="instruction-text">Please complete your profile information to continue</p>
 
-              <div class="form-group">
-                <label class="form-label">Full Name *</label>
-                <input type="text" name="full_name" id="full_name" class="form-control"
-                  value="<?php echo htmlspecialchars($default_name); ?>" required>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Email Address *</label>
-                <input type="email" id="email" class="form-control"
-                  value="<?php echo htmlspecialchars($default_email); ?>" readonly>
-                <small class="form-text text-muted">Email cannot be changed</small>
-                <span class="verified-badge">(verified)</span>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Phone Number *</label>
-                <input type="tel" name="phone_number" class="form-control"
-                  placeholder="Enter your phone number" required
-                  value="<?php echo isset($user_details['phone_number']) ? htmlspecialchars($user_details['phone_number']) : ''; ?>">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Street</label>
-                <input type="text" name="street" class="form-control"
-                  placeholder="Enter your street" required
-                  value="<?php echo isset($user_details['street']) ? htmlspecialchars($user_details['street']) : ''; ?>">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">City</label>
-                <input type="text" name="city" class="form-control"
-                  placeholder="Enter your city" required
-                  value="<?php echo isset($user_details['city']) ? htmlspecialchars($user_details['city']) : ''; ?>">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Province</label>
-                <input type="text" name="province" class="form-control"
-                  placeholder="Enter your province" required
-                  value="<?php echo isset($user_details['province']) ? htmlspecialchars($user_details['province']) : ''; ?>">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Zipcode</label>
-                <input type="text" name="zipcode" class="form-control"
-                  placeholder="Enter your zipcode" required
-                  value="<?php echo isset($user_details['zipcode']) ? htmlspecialchars($user_details['zipcode']) : ''; ?>">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Profile Picture (optional)</label>
-                <?php if (isset($user_details['pfp']) && !empty($user_details['pfp'])): ?>
-                  <div class="current-pfp">
-                    <p>Current profile picture: <?php echo basename($user_details['pfp']); ?></p>
+              <ul> 
+                <li>
+                  <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" name="full_name" id="full_name" class="form-control"
+                      value="<?php echo htmlspecialchars($default_name); ?>" required>
                   </div>
-                <?php endif; ?>
-                <input type="file" name="pfp" accept="image/*">
-              </div>
+                </li>
+
+                <li class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    <input type="email" id="email" class="form-control" 
+                          value="<?php echo htmlspecialchars($default_email); ?>" readonly 
+                          style="color: #888; font-style: italic;">
+                    <small class="form-text text-muted">Email cannot be changed</small>
+                    <!--<span class="verified-badge" style="color: green; font-style: italic;">(verified)</span>-->
+                  </div>
+
+
+                  <div class="form-group">  
+                    <label class="form-label">Phone Number *</label>
+                    <input type="tel" name="phone_number" class="form-control"
+                          placeholder="Enter your phone number" required
+                          value="<?php echo isset($user_details['phone_number']) ? htmlspecialchars($user_details['phone_number']) : ''; ?>"
+                          inputmode="numeric"
+                          pattern="[0-9]*">
+                  </div>     
+                </li>
+
+                <li class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Street</label>
+                    <input type="text" name="street" class="form-control"
+                      placeholder="Enter your street" required
+                      value="<?php echo isset($user_details['street']) ? htmlspecialchars($user_details['street']) : ''; ?>">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control"
+                      placeholder="Enter your city" required
+                      value="<?php echo isset($user_details['city']) ? htmlspecialchars($user_details['city']) : ''; ?>">
+                  </div>
+                </li>
+
+                <li class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Province</label>
+                    <input type="text" name="province" class="form-control"
+                      placeholder="Enter your province" required
+                      value="<?php echo isset($user_details['province']) ? htmlspecialchars($user_details['province']) : ''; ?>">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Zipcode</label>
+                      <input type="text" name="zipcode" class="form-control"
+                            placeholder="Enter your zipcode" required
+                            value="<?php echo isset($user_details['zipcode']) ? htmlspecialchars($user_details['zipcode']) : ''; ?>"
+                            inputmode="numeric"
+                            pattern="[0-9]*">
+                 </div>
+                </li>
+
+                <li class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Profile Picture (optional)</label>
+                    <?php if (isset($user_details['pfp']) && !empty($user_details['pfp'])): ?>
+                      <div class="current-pfp">
+                        <p>Current profile picture: <?php echo basename($user_details['pfp']); ?></p>
+                      </div>
+                    <?php endif; ?>
+                    <input type="file" name="pfp" accept="image/*">
+                  </div>
+                </li>
+
+                <li>
+                  <div class="form-group">
+                    <label class="form-label"><i class="fa-solid fa-money-check-dollar"></i> Payment Methods *</label>
+                    <select name="payment_method" required>
+                      <option value="">--- Select a Method ---</option>
+                      <option value="Gcash" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Gcash') ? 'selected' : ''; ?>>Gcash</option>
+                      <option value="Card" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Card') ? 'selected' : ''; ?>>Card</option>
+                      <option value="Cash-on-delivery" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Cash-on-delivery') ? 'selected' : ''; ?>>Cash-on-delivery</option>
+                    </select>
+                  </div>
+                </li>
+             </ul>
 
               <div class="form-group">
-                <label class="form-label"><i class="fa-solid fa-money-check-dollar"></i> Payment Methods *</label>
-                <select name="payment_method" required>
-                  <option value="">--- Select a Method ---</option>
-                  <option value="Gcash" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Gcash') ? 'selected' : ''; ?>>Gcash</option>
-                  <option value="Card" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Card') ? 'selected' : ''; ?>>Card</option>
-                  <option value="Cash-on-delivery" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Cash-on-delivery') ? 'selected' : ''; ?>>Cash-on-delivery</option>
-                </select>
-              </div>
-
             </div>
 
             <div class="modal-footer">

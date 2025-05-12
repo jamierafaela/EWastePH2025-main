@@ -1,6 +1,7 @@
 
 
 <?php
+// 1. CONNECT TO DATABASE
 $conn = new mysqli("localhost", "root", "", "ewaste_db");
 
 if ($conn->connect_error) {
@@ -12,6 +13,23 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../pages/ewasteWeb.php#loginSection");
     exit();
 }
+
+$user_id = $_SESSION['user_id'];
+$userDetails = [];
+
+$stmt = $conn->prepare("
+    SELECT d.full_name, d.phone_number, d.street, d.city, d.province, d.zipcode
+    FROM users u
+    JOIN user_details d ON u.user_id = d.user_id
+    WHERE u.user_id = ?
+");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    $userDetails = $result->fetch_assoc();
+}
+$stmt->close();
 
 
 $sql = "SELECT * FROM products ORDER BY product_id DESC";
@@ -26,8 +44,6 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout Page</title>
     <link rel="stylesheet" href="../styles/checkout1.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 
 <body>
@@ -36,7 +52,7 @@ $result = $conn->query($sql);
 
             <!-- Return Cart Summary -->
             <div class="returnCart">
-                <a href="../pages/ewasteShop.php"><i class="fas fa-shopping-cart"></i> Keep shopping</a>
+                <a href="../pages/ewasteShop.php">Keep shopping</a>
                 <h1>List Product In Cart</h1>
                 <div class="list">
                     <!-- PHP Cart -->
@@ -111,33 +127,37 @@ $result = $conn->query($sql);
                 <form action="checkout.php" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="cartData" value='<?php echo urlencode(json_encode($cart)); ?>'>
                     <div class="form">
-                        <div class="group half">
+                        <div class="group">
                             <label for="full-name">Full Name</label>
-                            <input type="text" name="full_name" id="full-name" required>
+                            <input type="text" name="full_name" id="full-name" value="<?php echo isset($userDetails['full_name']) ? 
+                            htmlspecialchars($userDetails['full_name']) : ''; ?>" required>
                         </div>
-                        <div class="group half">
+                        <div class="group">
                             <label for="phone-number">Phone Number</label>
-                            <input type="text" name="phone_number" id="phone-number" required>
+                            <input type="text" name="phone_number" id="phone_number" value="<?php echo isset($userDetails['phone_number']) ? 
+                            htmlspecialchars($userDetails['phone_number']) : ''; ?>" required>
                         </div>
-                        <div class="group half">
+                        <div class="group">
                             <label for="street">Street</label>
-                            <input type="text" name="street" id="street" required>
+                            <input type="text" name="street" id="street" value="<?php echo isset($userDetails['street']) ? 
+                            htmlspecialchars($userDetails['street']) : ''; ?>" required>
                         </div>
-                        <div class="group half">
+                        <div class="group">
                             <label for="city">City</label>
-                            <input type="text" name="city" id="city" required>
+                            <input type="text" name="city" id="city" value="<?php echo isset($userDetails['city']) ? 
+                            htmlspecialchars($userDetails['city']) : ''; ?>" required>
                         </div>
-
-                        <div class="group half">
+                        <div class="group">
                             <label for="province">Province</label>
-                            <input type="text" name="province" id="province" required>
+                            <input type="text" name="province" id="province" value="<?php echo isset($userDetails['province']) ? 
+                            htmlspecialchars($userDetails['province']) : ''; ?>" required>
                         </div>
-                        <div class="group half">
+                        <div class="group">
                             <label for="zipcode">Zipcode</label>
-                            <input type="text" name="zipcode" id="zipcode" required>
+                            <input type="text" name="zipcode" id="zipcode" value="<?php echo isset($userDetails['zipcode']) ? 
+                            htmlspecialchars($userDetails['zipcode']) : ''; ?>" required>
                         </div>
                     </div>
-
 
                     <div class="return">
                         <div class="row">

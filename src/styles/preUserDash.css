@@ -1,7 +1,8 @@
+/* Global Styles */
 body {
-    background-color: #f9f9f9;
+    background-color: #192619; /* Dark background */
     font-family: Arial, sans-serif;
-    color: #333;
+    color: #f1f1f1; /* Light text color */
     margin: 0;
 }
 
@@ -11,6 +12,7 @@ body {
     overflow: hidden; /* prevent weird side scrolls */
 }
 
+/* Left-side Styling */
 .left-side {
     width: 45%;
     height: 100vh; /* Full viewport height */
@@ -43,106 +45,161 @@ body {
     color: #fbf6f6;
 }
 
-.right-side p{
-   font-style: italic;
-   color: rgb(162, 162, 162);
-   font-size: 14px;
-   text-align: center;
-
+/* Right-side Styling */
+.right-side {
+    background: linear-gradient(#304e36, #4c8a57);
+    padding: 40px;
+    box-shadow: 0 8px 24px rgb(255, 254, 254);
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
 }
 
+.right-side p {
+    font-style: italic;
+    color: rgb(162, 162, 162);
+    font-size: 14px;
+    text-align: center;
+}
 
-.right-side {
-    width: 55%;
-    height: auto;
-    overflow-y: auto; /* Make form scroll if too long */
-    padding: 40px;
-    background-color: #009970;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+.modal {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
-.right-side h2 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.instruction-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: #f1f1f1; /* Light text color */
 }
 
 .form-group {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+ul, li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    padding: 0px 60px;
 }
 
 .form-label {
-    font-weight: bold;
-    color: #1d2d1e;
-    margin-bottom: 8px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #ccc; /* Light label color */
 }
 
 .form-control {
-    width: 600px;
-    padding: 12px;
+    padding: 12px 14px;
+    /*border: 1px solid #444;*/
+    border: 2px solid #ececec75;
+    border-radius: 10px;
     font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    display: block;
-    text-align: justify; /* Justifies the text */
-    transition: all 0.3s ease; /* Smooth transition for effects */
+    transition: all 0.3s ease;
+    /*background-color: #333;*/
+    background-color: #26492f; /* Dark background */
+    color: #fafffdd8; /* Light text color */
 }
 
-/* Input Focus Effects */
 .form-control:focus {
-    border-color: #2a5d37; /* Green border on focus */
-    outline: none; /* Remove default outline */
-    box-shadow: 0 0 5px rgba(42, 93, 55, 0.7); /* Green glow on focus */
+    outline: none;
+    border-color: #47b96a;
+    box-shadow: 0 0 0 3px rgba(71, 185, 106, 0.15);
 }
 
-/* Styling for select dropdown */
-select.form-control {
+.form-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.verified-badge {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Payment Method Styling */
+select[name="payment_method"] {
+    appearance: none;
+    padding: 12px 14px;
+    border: 1px solid #ececec;
+    border-radius: 10px;
     font-size: 1rem;
-    padding: 12px;
+    /*background-color: #333; /* Dark background */
+    background-color: #26492f; /* Dark background */
+    color: #f1f1f1; /* Light text */
+    background-image: url('https://cdn-icons-png.flaticon.com/512/892/892692.png');
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    transition: border-color 0.3s;
 }
 
-/* Button styling */
-button[type="submit"] {
-    background-color: #2a5d37;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    cursor: pointer;
+select[name="payment_method"]:focus {
+    border-color: #47b96a;
+    box-shadow: 0 0 0 3px rgba(71, 185, 106, 0.15);
+}
+
+/* Submit + Reset buttons */
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 20px;
-    transition: background-color 0.3s ease;
+    flex-wrap: wrap;
+}
+
+.required-fields-note {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+button[type="submit"],
+button[type="reset"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button[type="submit"] {
+    background-color: #47b96a;
+    color: #fff;
 }
 
 button[type="submit"]:hover {
-    background-color: #276f2e;
+    background-color: #3fa85d;
 }
 
 button[type="reset"] {
-    background-color: #f0f0f0;
-    color: #333;
-    padding: 12px 20px;
-    border: none;
-    font-size: 1.1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
+    background-color: #444;
+    color: #fff;
 }
 
 button[type="reset"]:hover {
-    background-color: #e0e0e0;
-}
-
-/* Note for required fields */
-.required-fields-note {
-    font-size: 0.9rem;
-    color: #888;
-    margin-top: 20px;
+    background-color: #333;
 }
 
 /* Success message styling */
@@ -151,6 +208,7 @@ button[type="reset"]:hover {
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
+    background-color: #333; /* Dark background for success message */
 }
 
 .success-message h2 {
@@ -158,14 +216,13 @@ button[type="reset"]:hover {
     font-size: 1.5rem;
 }
 
-/* Current profile picture display */
 .current-pfp {
-    background-color: #f4f4f4;
+    background-color: #444; /* Dark background */
     padding: 10px;
     border-radius: 8px;
     margin-top: 10px;
     font-size: 1rem;
-    color: #333;
+    color: #f1f1f1; /* Light text */
 }
 
 /* Progress Circle */
@@ -199,6 +256,7 @@ button[type="reset"]:hover {
     font-size: 1.1rem;
     font-style: italic;
     margin-top: 20px;
+    color: #bbb; /* Light color for the quote */
 }
 
 /* Floating Icons */
@@ -212,8 +270,6 @@ button[type="reset"]:hover {
     height: 40px;
     animation: float 6s ease-in-out infinite;
     opacity: 0.7;
-
-
 }
 
 .floating-icon:nth-child(1) {
@@ -221,16 +277,19 @@ button[type="reset"]:hover {
     left: 10%;
     animation-delay: 0s;
 }
+
 .floating-icon:nth-child(2) {
     top: 20%;
     left: 60%;
     animation-delay: 2s;
 }
+
 .floating-icon:nth-child(3) {
     top: 60%;
     left: 30%;
     animation-delay: 4s;
 }
+
 .progress-ring__circle {
     stroke: #ffcc00; /* yellow color */
     stroke-dasharray: 326;
@@ -238,8 +297,8 @@ button[type="reset"]:hover {
     transform: rotate(-90deg);
     transform-origin: 50% 50%;
     transition: stroke-dashoffset 0.5s ease-out;
-    
 }
+
 .progress-container {
     position: relative;
     width: 120px;
@@ -251,7 +310,6 @@ button[type="reset"]:hover {
     flex-direction: column;
 }
 
-
 /* Floating Animation */
 @keyframes float {
     0%, 100% {
@@ -261,6 +319,7 @@ button[type="reset"]:hover {
         transform: translateY(-20px);
     }
 }
+
 /* Fade-in animation */
 @keyframes fadeInUp {
     from {
@@ -286,7 +345,46 @@ button[type="reset"]:hover {
     transform: translateY(0);
 }
 
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
 
+    .left-side {
+        width: 100%;
+        height: auto;
+        position: relative; /* Remove sticky */
+        padding: 20px;
+    }
 
+    .right-side {
+        width: 100%;
+        max-width: none;
+        padding: 20px;
+    }
 
-/* USERDASH */
+    .form-control {
+        width: 100%; /* Ensure form fields take full width */
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    button[type="submit"],
+    button[type="reset"] {
+        width: 100%; /* Make buttons full width on mobile */
+        margin-top: 10px;
+    }
+}
+.form-group small{
+    margin: 5px;
+    color: gray;
+    text-decoration: italic;
+}
