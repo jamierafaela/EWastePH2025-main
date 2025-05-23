@@ -96,6 +96,19 @@ $_SESSION['csrf_token'] = $csrf_token;
     margin-bottom: 25px;
 }
 
+.btn {
+    background-color: #2e7d32;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #1b5e20;
+}
 </style>
 
     </style>
@@ -236,7 +249,7 @@ $_SESSION['csrf_token'] = $csrf_token;
 
 
 
-    <div class="container1">
+    <section class="container1">
         <!-- Contact Section (Left Side) -->
         <section id="contact" class="section contact-section">
             <h2>Contact Us</h2>
@@ -246,13 +259,24 @@ $_SESSION['csrf_token'] = $csrf_token;
                 <p><strong>Address:</strong> Las Piñas, Philippines</p>
             </div>
 
-            <form class="contact-form" id="contactForm">
-                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <form class="contact-form" id="guestContactForm">
                 <input type="text" name="name" placeholder="Enter your full name" required>
                 <input type="email" name="email" placeholder="Enter your email address" required>
                 <textarea name="message" placeholder="Write your message here..." rows="5" required></textarea>
                 <button type="submit">Send Message</button>
             </form>
+
+            <div id="modal" class="modal-overlay">
+                <div class="modal-box">
+                    <button id="closePopup" class="close-icon" aria-label="Close popup">&times;</button>
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <p>Your message has been sent successfully!</p>
+                    <button class="btn" onclick="closeModal()">OK</button>
+                </div>
+            </div>
+
+
+
         </section>
 
         <!-- FAQ Section (Right Side) -->
@@ -324,30 +348,61 @@ $_SESSION['csrf_token'] = $csrf_token;
                 </div>
             </div>
         </section>
+</section>
 
-        
-        <!-- Modal -->
-        <div id="modal" class="modal-overlay">
-            <div class="modal-box">
-                <button class="close-icon" onclick="closeModal()" aria-label="Close popup">&times;</button>
+
+
+
+
+
+<form id="contactForm">
+    <h2>Contact Us</h2>
+    <input type="text" name="name" placeholder="Your name" required>
+    <input type="email" name="email" placeholder="Your email" required>
+    <textarea name="message" rows="5" placeholder="Your message" required></textarea>
+    <button type="submit">Send Message</button>
+</form>
+
+<!-- Modal -->
+<div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="close-icon" aria-label="Close popup">&times;</button>
+            <i class="fas fa-check-circle success-icon"></i>
+            <h2>Message Sent!</h2>
+            <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
+            <button class="modal-btn" onclick="closeModal()">Continue</button>
+        </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- Popup -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <button id="closePopup" class="close-icon" aria-label="Close popup">&times;</button>
                 <i class="fas fa-check-circle success-icon"></i>
-                <h2>Message Sent!</h2>
-                <p>Thank you for contacting us. We'll get back to you within 24 hours.</p>
-                <button class="modal-btn" onclick="closeModal()">Continue</button>
+                <p>Your message has been sent successfully!</p>
             </div>
         </div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- Login/Profile Section -->
     <?php if (!isset($_SESSION['user_id'])): ?>
@@ -501,72 +556,61 @@ $_SESSION['csrf_token'] = $csrf_token;
 
 
 
-
-
-
-
-
-
-
-
 <script>
-            // script for login
-            const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
+    // script for login
+    const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
 
-            function handleAction(action) {
-                if (isLoggedIn) {
-
-                    if (action === 'buy') {
-                        window.location.href = "ewasteShop.php";
-                    } else if (action === 'sell') {
-                        window.location.href = "sell.php";
-                    }
-                } else {
-
-                    document.getElementById("loginSection").scrollIntoView({
-                        behavior: "smooth"
-                    });
-                }
+    function handleAction(action) {
+        if (isLoggedIn) {
+            if (action === 'buy') {
+                window.location.href = "ewasteShop.php";
+            } else if (action === 'sell') {
+                window.location.href = "sell.php";
             }
- 
-        // Login popup 
-        document.addEventListener('DOMContentLoaded', function() {
-            const justLoggedIn = <?php echo $justLoggedIn ? 'true' : 'false'; ?>;
-            const loginPopup = document.getElementById('loginPopup');
-            
-            if (justLoggedIn && loginPopup) {
-                
-                setTimeout(function() {
-                    loginPopup.classList.add('show');
-                }, 250);
-                
-                const closeBtn = loginPopup.querySelector('.login-popup-close');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', function() {
-                        loginPopup.classList.remove('show');
-                    });
-                }
-                
-                const continueBtn = loginPopup.querySelector('.login-popup-button');
-                if (continueBtn) {
-                    continueBtn.addEventListener('click', function() {
-                        loginPopup.classList.remove('show');
-                    });
-                }
+        } else {
+            document.getElementById("loginSection").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+    }
 
-                loginPopup.addEventListener('click', function(e) {
-                    if (e.target === loginPopup) {
-                        loginPopup.classList.remove('show');
-                    }
+    // Login popup 
+    document.addEventListener('DOMContentLoaded', function () {
+        const justLoggedIn = <?php echo $justLoggedIn ? 'true' : 'false'; ?>;
+        const loginPopup = document.getElementById('loginPopup');
+
+        if (justLoggedIn && loginPopup) {
+            setTimeout(function () {
+                loginPopup.classList.add('show');
+            }, 250);
+
+            const closeBtn = loginPopup.querySelector('.login-popup-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function () {
+                    loginPopup.classList.remove('show');
                 });
             }
-        });
 
-        //Password toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
+            const continueBtn = loginPopup.querySelector('.login-popup-button');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function () {
+                    loginPopup.classList.remove('show');
+                });
+            }
+
+            loginPopup.addEventListener('click', function (e) {
+                if (e.target === loginPopup) {
+                    loginPopup.classList.remove('show');
+                }
+            });
+        }
+    });
+
+    // Password toggle functionality
+    document.addEventListener('DOMContentLoaded', function () {
         // Toggle password visibility
-        document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-            toggle.addEventListener('click', function() {
+        document.querySelectorAll('.toggle-password').forEach(function (toggle) {
+            toggle.addEventListener('click', function () {
                 const targetId = this.getAttribute('data-target');
                 const input = document.getElementById(targetId);
                 const icon = this.querySelector('i');
@@ -666,10 +710,10 @@ $_SESSION['csrf_token'] = $csrf_token;
         // Form submission validation
         const signupForm = document.querySelector('#signupForm form');
         if (signupForm) {
-            signupForm.addEventListener('submit', function(event) {
+            signupForm.addEventListener('submit', function (event) {
                 const password = passwordInput.value;
 
-                if (password.length < 8 || !(/[A-Z]/.test(password)) || 
+                if (password.length < 8 || !(/[A-Z]/.test(password)) ||
                     !(/[a-z]/.test(password)) || !(/[0-9]/.test(password))) {
                     alert('Please ensure your password meets all requirements');
                     event.preventDefault();
@@ -681,98 +725,85 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
     });
 
+    // Form submission functionality
+    document.getElementById('guestContactForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        // Show success popup
+        document.getElementById('popup').style.display = 'flex';
+        // Reset form
+        this.reset();
+    });
 
+    // Close popup functionality
+    document.getElementById('closePopup').addEventListener('click', function () {
+        document.getElementById('popup').style.display = 'none';
+    });
 
+    // Form submission and popup handling
+    document.getElementById('guestContactForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
+        // You would typically send the form data to a server here
+        // For demonstration, we'll just show the success popup
 
-    // About Us Cards - Default Active State Management
-    document.addEventListener('DOMContentLoaded', function() {
-    const aboutCard = document.querySelector('.info-card.about-card');
-    const missionCard = document.querySelector('.info-card.mission-card');
-    const visionCard = document.querySelector('.info-card.vision-card');
-    const allCards = [aboutCard, missionCard, visionCard];
-    
-    let activeTimeout;
-    let isUserInteracting = false;
-    
-    // Function to set about card as active
-    function setAboutCardActive() {
-        // Remove active class from all cards
-        allCards.forEach(card => {
-            if (card) card.classList.remove('active');
-        });
-        
-        // Add active class to about card
-        if (aboutCard) {
-            aboutCard.classList.add('active');
-        }
-    }
-    
-    // Function to handle user interaction start
-    function handleInteractionStart(card) {
-        isUserInteracting = true;
-        clearTimeout(activeTimeout);
-        
-        // Remove active from all cards
-        allCards.forEach(c => {
-            if (c) c.classList.remove('active');
-        });
-        
-        // Add active to hovered card
-        if (card) {
-            card.classList.add('active');
-        }
-    }
-    
-    // Function to handle user interaction end
-    function handleInteractionEnd() {
-        isUserInteracting = false;
-        
-        // Set a timeout to return to default state after user stops interacting
-        activeTimeout = setTimeout(() => {
-            if (!isUserInteracting) {
-                setAboutCardActive();
+        const popup = document.getElementById('popup');
+        popup.style.display = 'flex';
+
+        // Reset form
+        this.reset();
+    });
+
+    document.getElementById('closePopup').addEventListener('click', function () {
+        document.getElementById('popup').style.display = 'none';
+    });
+
+    // FAQ accordion functionality - only one open at a time
+    const faqTriggers = document.querySelectorAll('.faq-trigger');
+
+    faqTriggers.forEach(trigger => {
+        trigger.addEventListener('change', function () {
+            // If this trigger is checked (opened)
+            if (this.checked) {
+                // Close all other FAQ items
+                faqTriggers.forEach(otherTrigger => {
+                    if (otherTrigger !== this) {
+                        otherTrigger.checked = false;
+                    }
+                });
             }
-        }, 500); // 500ms delay before returning to default
-    }
-    
-    // Add event listeners to each card
-    allCards.forEach(card => {
-        if (card) {
-            // Mouse events
-            card.addEventListener('mouseenter', () => handleInteractionStart(card));
-            card.addEventListener('mouseleave', handleInteractionEnd);
-            
-            // Touch events for mobile
-            card.addEventListener('touchstart', () => handleInteractionStart(card));
-            card.addEventListener('touchend', handleInteractionEnd);
-            
-            // Click events
-            card.addEventListener('click', () => handleInteractionStart(card));
-        }
+        });
     });
-    
-    // Set initial active state to about card
-    setAboutCardActive();
-    
-    // Optional: Add click outside functionality
-    document.addEventListener('click', function(event) {
-        const clickedInsideCards = allCards.some(card => 
-            card && card.contains(event.target)
-        );
-        
-        if (!clickedInsideCards) {
-            handleInteractionEnd();
-        }
+
+    // JavaScript to handle card switching and maintain one active card at all times
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set About Us card as default active on page load
+        document.querySelector('.about-card').classList.add('active');
+
+        const cards = document.querySelectorAll('.info-card');
+
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                cards.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // When mouse leaves the wrapper, default back to About Us
+        const wrapper = document.querySelector('.info-cards-wrapper');
+        wrapper.addEventListener('mouseleave', function () {
+            cards.forEach(c => c.classList.remove('active'));
+            document.querySelector('.about-card').classList.add('active');
+        });
     });
-});
 
 
 
 
+    
 
 
-// Contact form submission with database save
+ 
+        // Contact form submission with database save
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -854,7 +885,9 @@ $_SESSION['csrf_token'] = $csrf_token;
                 closeModal();
             }
         });
-           
+
+
+    
 </script>
 
 

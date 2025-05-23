@@ -24,7 +24,7 @@ nav.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #223527;
+    background-color: #184426;
     padding: 15px 5%;
     position: fixed;
     width: 100%;
@@ -124,58 +124,187 @@ section {
     padding: 18px 50px;
 }
 
+
+.part1 {
+     background: linear-gradient(135deg, #40916c  0%, #152e22 100%);
+    padding-bottom: 100px;
+}
+
 /* About Us Section */
-.about-section {
-    margin: 100px 0 100px;
-}
-.about-section h2 {
-    font-size: 2.5rem;
-    color: #2a5d37;
-    margin-bottom: 20px;
-}
-
-.about-section p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #555;
-    margin-bottom: 30px;
+#about{
+  text-align: justify;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  /*background: linear-gradient(135deg, #40916c  0%, #152e22 100%);*/
+  
 }
 
-.mission-vision {
-    display: flex;
-    justify-content: space-around;
+
+.aboutHead {
+  margin-top: 40px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #e0e3c9;
+  /*border-bottom: 3px solid #ffd700;*/
+  display: block;
+  text-align: center;
+}
+
+
+.ewaste-page-container {
+  max-width: 1200px;
+  width: 100%;
+  justify-content: center;
+  width: 1100px;
+  margin: 50px 0px;
+      
+}
+
+.info-cards-wrapper {
+  display: flex;
+  width: 100%;
+  height: 600px;
+  transition: all 0.4s ease;
+}
+
+.info-card {
+  flex: 0.3;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #e0e3c9;
+  border-radius: 12px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  filter: brightness(0.6);
+  
+  
+  
+}
+
+.info-card.active {
+  flex: 0.5;
+  transform: scale(1.03) translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  height: 625px;
+  z-index: 5;
+  filter: brightness(1.2);
+  border-color: #21d099;
+
+}
+
+.info-card {
+    transition: all 0.3s ease;
+}
+
+
+.info-card:hover {
+  flex: 0.5;
+  transform: scale(1.03) translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  height: 625px;
+  z-index: 5;
+  filter: brightness(1.2);
+  border-color: #21d099;
+}
+
+.info-card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.info-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right, #2e8b57b3, #00000099);
+  z-index: 2;
+  transition: background 0.3s ease;
+  filter: contrast(1.3) brightness(0.8);
+}
+.info-card-overlay:hover {
+  background: linear-gradient(to bottom right, #2e8b57b3, #00000094);
+  filter: contrast(1.3) brightness(0.8);
+}
+
+.info-card-content {
+  position: relative;
+  z-index: 3;
+  padding: 30px;
+  transition: font-size 0.3s ease;
+}
+
+.info-card-header {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  border-left: 5px solid #ffd700;
+  padding-left: 10px;
+}
+
+.info-card-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-height: 60px;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.info-card.active .info-card-text,
+.info-card:hover .info-card-text {
+  max-height: 600px;
+}
+
+@media (max-width: 768px) {
+  .info-cards-wrapper {
+    flex-direction: column;
+    height: auto;
     gap: 20px;
-    flex-wrap: wrap;
-    padding-top: 50px;
+  }
+
+  .info-card {
+    flex: 1 !important;
+    height: auto;
+    transition: transform 0.3s ease;
+    filter: brightness(1);
+  }
+
+  .info-card.active,
+  .info-card:hover {
+    transform: scale(1.02);
+    z-index: 5;
+  }
 }
 
-.mission, .vision {
-    background: #f5f5f5;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    text-align: left;
-}
 
-.mission h3, .vision h3 {
-    font-size: 1.8rem;
-    color: #2a5d37;
-    margin-bottom: 10px;
-}
 
-.mission p, .vision p {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #555;
-    text-align: justify;
-}
+
+
+
+
 
 /*checkout*/
 
 
 /* Shop Section */
+#shop {
+    /*background: linear-gradient(195deg, #152e22  0%, #40916c 100%);*/
+    padding: 50px 5%;
+    text-align: center;
+}
 .shop-header {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));;
@@ -194,7 +323,7 @@ section {
 
 .shop-section h2 {
     font-size: 2.8rem;
-    color: #2a5d37;
+    color: #e0e3c9;
     margin-bottom: 30px;
     font-family: "DM Sans", sans-serif;
 }
@@ -205,7 +334,7 @@ section {
 
 .new-products h3, .all-products h3{
     font-size: 2rem;
-    color: #1e5631;
+    color: #e0e3c9;
     margin: 60px 0;
     
     font-family: "DM Sans", sans-serif;
@@ -222,7 +351,7 @@ section {
 }
 
 .product-card {
-    background: #ffffff;
+    background: linear-gradient(to top, #a3b79ee0, #e0e0e0);
     border-radius: 15px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -311,180 +440,320 @@ section {
 .show-more-btn:hover {
     background: #f1c40f;
     color: #2a5d37;
-}
-/* FAQ Section */
-.faq {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    padding: 40px 5%;
-    background: linear-gradient(#e5e8e8, #f0f4f4);
-    box-shadow: #52505042 6px 8px 10px 0px;
-}
-.faq-section {
-    margin: 100px 0 100px;
-    display: flex;
-    align-items: stretch;   
-}
-.faq-name{
-    flex: 0.5;
-    padding: 0 30px 0 0;
-    border-right: 2px solid #2a5d3786;
-    min-height: 100%;
-}
+}       
 
 
+        .container1 {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: flex-start; /* Change from default stretch to flex-start */
+            background: linear-gradient(to bottom, rgba(25, 10, 10, 0.8), rgba(42, 93, 55, 0.7)), url('/EWastePH/Public/images/tvbg_enhanced.jpg') center/cover;
+        }
 
-.faq-header {
-    font-family: "DM Sans", sans-serif;
-    font-size: 36px;
-    color: #2a5d37;
-    margin-bottom: 15px;
-}
+        /* Contact Section Styles */
+        .contact-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: #aed4bd;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: sticky; /* Make it sticky */
+            top: 20px; /* Distance from top of viewport */
+            height: fit-content; /* Height based on content */
+            max-height: 95vh; /* Prevent it from being too tall */
+            overflow-y: auto; /* Add scrolling if needed */
+        }
 
-.faq-welcome {
-    font-family: "DM Sans", sans-serif;
-    font-size: 18px;
-    color: #555;
-    line-height: 1.6;
-    text-align: justify;
-}
+        .contact-section h2 {
+            color: #2e7d32;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
 
-.faq-box {
-    flex: 1;
-    padding: 20px 20px;
-}
+        .contact-section h2:after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #2e7d32;
+            margin: 10px auto;
+        }
 
-.faq-wrapper {
-    margin-bottom: 15px;
-    padding: 10px 15px;
-    border-bottom: 2px solid #2a5d37;
-}
+        .contact-info {
+            margin-bottom: 30px;
+        }
 
-.faq-title {
-    font-family: "DM Sans", sans-serif;
-    font-size: 20px;
-    color: #2a5d37;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    transition: color 0.3s ease;
-}
+        .contact-info p {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
 
-.faq-title i {
-    font-size: 16px;
-    transition: transform 0.3s ease;
-}
+        .contact-info p strong {
+            min-width: 80px;
+            color: #2e7d32;
+        }
 
-.faq-title:hover {
-    color: #144022; 
-}
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
 
-.faq-trigger:checked + .faq-title i {
-    transform: rotate(90deg);
-}
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
 
-.faq-detail {
-    font-size: 16px;
-    color: #555;
-    margin-top: 10px;
-    line-height: 1.5;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
+        .btn {
+            background-color: #2e7d32;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
 
- 
-}
+        .btn:hover {
+            background-color: #1b5e20;
+        }
 
-.faq-detail ul li {
-    margin-left: 20px;
-}
-.faq-detail ul, p{
-    list-style: none;
-    text-align: left;
-}
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
 
-.faq-trigger {
-    display: none;
-}
+        .popup-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+        }
 
-.faq-trigger:checked + .faq-title + .faq-detail {
-    max-height: 300px;
-}
+        .close-icon {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #666;
+        }
 
+        .success-icon {
+            font-size: 50px;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
 
+        /* FAQ Section Styles */
+        .faq-section {
+            flex: 1;
+            min-width: 300px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
 
-/* Contact Section, in the login.css */
+        .faq-name {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-/* Contact Section */
-.contact-section {
-    padding: 10rem;
-    text-align: center;
-    padding-bottom: 10rem;
-  }
-  
-  .contact-info p {
-    margin: 0.5rem 0;
-    color: #444;
-    text-align: center;
-  }
-  h2{
-    font-size: 2.5rem;
-    color: #2a5d37;
-    margin-bottom: 20px;
-  }
-  
-  /* Form Styling */
-  .contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 500px;
-    margin: 2rem auto;
-  }
-  
-  .contact-form input,
-  .contact-form textarea {
-    padding: 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border 0.3s;
-  }
-  
-  .contact-form input::placeholder,
-  .contact-form textarea::placeholder {
-    color: #999;
-    font-style: italic;
-  }
-  
-  .contact-form input:focus,
-  .contact-form textarea:focus {
-    border-color: #2a5d37;
-    outline: none;
-  }
-  
-  .contact-form button.btn {
-    padding: 0.9rem;
-    font-size: 1rem;
-    background-color: #2a5d37;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .contact-form button.btn:hover {
-    background-color: #f1c40f;
-    color:#2a5d37;
-  }
-  
+        .faq-header {
+            color: #2e7d32;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
 
+        .faq-welcome {
+            font-size: 16px;
+            font-weight: normal;
+            color: #666;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+
+        .faq-box {
+            margin-top: 20px;
+        }
+
+        .faq-wrapper {
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .faq-trigger {
+            display: none;
+        }
+
+        .faq-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-weight: bold;
+            color: #2e7d32;
+            transition: all 0.3s ease;
+            
+        }
+
+        .faq-title i {
+            transition: all 0.3s ease;  
+        }
+
+        .faq-title {
+        /* ... other properties ... */
+        transition: all 0.3s ease;  /* This coordinates all hover effects */
+        /* ... */
+    }
+
+        .faq-title:hover {
+            background: linear-gradient(135deg, #edf2f7 0%, #cbd5e0 100%);
+            color: #667eea;
+        }
+
+        .faq-title::before {
+            /* ... shimmer setup ... */
+            transition: left 0.5s;  /* Coordinates the shimmer animation */
+        }
+
+        .faq-title:hover::before {
+            left: 100%;  /* Triggers the shimmer movement */
+        }
+
+        .faq-trigger:checked + .faq-title {
+            background-color: #e8f5e9;
+        }
+
+        .faq-trigger:checked + .faq-title i {
+            transform: rotate(90deg);
+        }
+
+        .faq-detail {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background-color: #fff;
+            padding: 0 15px;
+        }
+
+        .faq-trigger:checked ~ .faq-detail {
+            max-height: 500px;
+            padding: 15px;
+        }
+
+        .faq-detail p {
+            margin-bottom: 10px;
+        }
+
+        .faq-detail ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .faq-detail li {
+            margin-bottom: 5px;
+        }
+
+        /* Media query for responsive design */
+        @media (max-width: 768px) {
+            .container1 {
+                flex-direction: column;
+            }
+            
+            .contact-section {
+                position: static;
+                height: auto;
+                max-height: none;
+                overflow-y: visible;
+            }
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .close-icon {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .success-icon {
+            color: #2e7d32;
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container1 {
+                flex-direction: column;
+            }
+            
+            .contact-section, 
+            .faq-section {
+                width: 100%;
+                min-width: 100%;
+            }
+        }
+   
 /* Back to Top Button */
 /* Back to Top Button */
 #upButton {

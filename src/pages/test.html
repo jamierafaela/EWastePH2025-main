@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>E-Waste Philippines - About Section</title>
+  <style>
+    #about {
+      text-align: justify;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      background: linear-gradient(135deg, #40916c 0%, #152e22 100%);
+    }
+
+    .aboutHead {
+      margin-top: 40px;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #e0e3c9;
+      border-bottom: 3px solid #ffd700;
+      display: block;
+      padding-bottom: 10px;
+      text-align: center;
+      width: 500px;
+    }
+
+    .ewaste-page-container {
+      max-width: 1200px;
+      width: 100%;
+      justify-content: center;
+      margin: 100px 0px;
+    }
+
+    .info-cards-wrapper {
+      display: flex;
+      width: 100%;
+      height: 600px;
+      transition: all 0.4s ease;
+    }
+
+    .info-card {
+      flex: 0.4;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: #ffffff;
+      border-radius: 12px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+      filter: brightness(0.6);
+    }
+
+    .info-card-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .info-card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom right, rgba(46, 139, 87, 0.7), rgba(0, 0, 0, 0.6));
+      z-index: 2;
+      transition: background 0.3s ease;
+    }
+
+    .info-card-content {
+      position: relative;
+      z-index: 3;
+      padding: 30px;
+      transition: font-size 0.3s ease;
+    }
+
+    .info-card-header {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      border-left: 5px solid #ffd700;
+      padding-left: 10px;
+    }
+
+    .info-card-text {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-height: 60px;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .info-card.active .info-card-text,
+    .info-card:hover .info-card-text {
+      max-height: 600px;
+    }
+
+    /* Default Sizes */
+    .about-card {
+      flex: 1;
+    }
+
+    .mission-card {
+      flex: 0.6;
+    }
+
+    .vision-card {
+      flex: 0.4;
+    }
+
+    /* Hovering VISION - shrink ABOUT the most */
+    .vision-card:hover {
+      flex: 1.1;
+    }
+
+    .vision-card:hover ~ .mission-card {
+      flex: 0.6;
+    }
+
+    .vision-card:hover ~ .about-card {
+      flex: 0.3;
+    }
+
+    /* Hovering ABOUT - shrink VISION the most */
+    .about-card:hover {
+      flex: 1.1;
+    }
+
+    .about-card:hover ~ .mission-card {
+      flex: 0.6;
+    }
+
+    .about-card:hover ~ .vision-card {
+      flex: 0.3;
+    }
+
+    /* Hovering MISSION - balance ABOUT and VISION */
+    .mission-card:hover {
+      flex: 1.1;
+    }
+
+    .mission-card:hover ~ .about-card {
+      flex: 0.5;
+    }
+
+    .mission-card:hover ~ .vision-card {
+      flex: 0.5;
+    }
+
+    @media (max-width: 768px) {
+      .info-cards-wrapper {
+        flex-direction: column;
+        height: auto;
+        gap: 20px;
+      }
+
+      .info-card {
+        flex: 1 !important;
+        height: auto;
+        transition: transform 0.3s ease;
+        filter: brightness(1);
+      }
+
+      .info-card:hover {
+        transform: scale(1.02);
+        z-index: 5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section id="about" class="section about-section">
+    <div class="aboutHeader">
+      <h2 class="aboutHead">About Us</h2>
+      <div class="ewaste-page-container">
+        <div class="info-cards-wrapper">
+          <!-- About Us Card -->
+          <div class="info-card about-card">
+            <img src="../../Public/images/tvbg_enhanced.jpg" alt="About E-Waste Philippines" class="info-card-image" />
+            <div class="info-card-overlay"></div>
+            <div class="info-card-content">
+              <div class="info-card-header">E-WastePH</div>
+              <div class="info-card-text">
+                E-Waste Philippines is a dedicated waste management company based in Las Piñas, Philippines. Founded in 2023, we aim to tackle the growing issue of electronic waste responsibly through recycling and reusing e-waste items...
+              </div>
+            </div>
+          </div>
+
+          <!-- Mission Card -->
+          <div class="info-card mission-card">
+            <img src="../../Public/images/tvbg_enhanced.jpg" alt="E-waste collection process" class="info-card-image" />
+            <div class="info-card-overlay"></div>
+            <div class="info-card-content">
+              <div class="info-card-header">Mission</div>
+              <div class="info-card-text">
+                Our mission is to transform how the Philippines manages electronic waste, promoting responsible e-waste disposal to protect our environment and create a sustainable future for generations to come.
+              </div>
+            </div>
+          </div>
+
+          <!-- Vision Card -->
+          <div class="info-card vision-card">
+            <img src="../../Public/images/tvbg_enhanced.jpg" alt="Sustainable e-waste future" class="info-card-image" />
+            <div class="info-card-overlay"></div>
+            <div class="info-card-content">
+              <div class="info-card-header">Vision</div>
+              <div class="info-card-text">
+                We envision a cleaner, safer Philippines where e-waste is no longer a threat to health or the environment, and where sustainable practices are embraced by all communities across the nation.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

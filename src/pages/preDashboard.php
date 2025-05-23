@@ -294,17 +294,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   </div>
                 </li>
 
-                <li>
-                  <div class="form-group">
-                    <label class="form-label"><i class="fa-solid fa-money-check-dollar"></i> Payment Methods *</label>
-                    <select name="payment_method" required>
-                      <option value="">--- Select a Method ---</option>
-                      <option value="Gcash" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Gcash') ? 'selected' : ''; ?>>Gcash</option>
-                      <option value="Card" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Card') ? 'selected' : ''; ?>>Card</option>
-                      <option value="Cash-on-delivery" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Cash-on-delivery') ? 'selected' : ''; ?>>Cash-on-delivery</option>
-                    </select>
-                  </div>
-                </li>
+<li>
+  <div class="form-group">
+    <label class="form-label">
+      <i class="fa-solid fa-money-check-dollar"></i> Payment Methods *
+    </label>
+    <select name="payment_method" class="form-control" required>
+      <option value="">--- Select a Method ---</option>
+      <option value="Gcash" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Gcash') ? 'selected' : ''; ?>>Gcash</option>
+      <option value="Card" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Card') ? 'selected' : ''; ?>>Card</option>
+      <option value="Cash-on-delivery" <?php echo (isset($user_details['payment_method']) && $user_details['payment_method'] == 'Cash-on-delivery') ? 'selected' : ''; ?>>Cash-on-delivery</option>
+    </select>
+  </div>
+</li>
+
              </ul>
 
               <div class="form-group">

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const formInputs = document.querySelectorAll('.right-side .form-control');
+    const formInputs = document.querySelectorAll('.right-side .form-control'); // includes inputs and select
     const progressCircle = document.querySelector('.progress-ring__circle');
     const progressText = document.querySelector('.progress-text');
 
@@ -11,8 +11,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function updateProgress() {
         let filledFields = 0;
+
         formInputs.forEach(input => {
-            if (input.value.trim() !== '') {
+            // Check for filled text input or selected dropdown value
+            if (input.tagName === 'SELECT') {
+                // Ignore the default option (value is usually empty)
+                if (input.value.trim() !== '') {
+                    filledFields++;
+                }
+            } else if (input.value.trim() !== '') {
                 filledFields++;
             }
         });
@@ -24,8 +31,10 @@ document.addEventListener("DOMContentLoaded", function() {
         progressText.textContent = `${Math.round(progress)}%`;
     }
 
+    // Add event listener for all form inputs (text, select, etc.)
     formInputs.forEach(input => {
         input.addEventListener('input', updateProgress);
+        input.addEventListener('change', updateProgress); // Needed for <select>
     });
 
     updateProgress(); // initialize on page load

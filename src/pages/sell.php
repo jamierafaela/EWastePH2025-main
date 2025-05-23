@@ -130,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create'])) {
     } else {
 
         if(isset($_FILES['product_image']) && $_FILES['product_image']['error'] === 0) {
-            $upload_dir = '../uploads/listings';
+            $upload_dir = '../uploads/';
             if (!file_exists($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
@@ -182,6 +182,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create'])) {
 
 
 $conn->close();
+
+//edit redirect
+$edit_redirect = false;
+$edit_data = null;
+
+if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
+    $edit_redirect = true;
+    $edit_product_id = intval($_GET['id']);
+  
+    $conn = new mysqli("localhost", "root", "", "ewaste_db");
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    $edit_product_query = $conn->prepare("SELECT * FROM listings WHERE listing_id = ? AND seller_id = ?");
+    $edit_product_query->bind_param("ii", $edit_product_id, $user_id);
+    $edit_product_query->execute();
+    $edit_result = $edit_product_query->get_result();
+    
+    if ($edit_result->num_rows > 0) {
+        $edit_data = $edit_result->fetch_assoc();
+    }
+    
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>
@@ -266,6 +291,8 @@ $conn->close();
 </head>
 
 <body>
+
+
     <div class="page-header">
         <div class="header-container">
             <h1 class="page-title"><i class="fas fa-boxes"></i> Sell Products </h1>
@@ -300,7 +327,7 @@ $conn->close();
             </ul>
         </div>
 
-        <!-- Manage Products Tab -->
+        <!-- Manage Products -->
         <div id="manage-products" class="tab-content">
             <?php if ($user_products_result->num_rows > 0): ?>
                 <table class="product-table">
@@ -361,7 +388,7 @@ $conn->close();
             <?php endif; ?>
         </div>
 
-        <!-- Add Product Tab -->
+        <!-- Add Product -->
         <div id="add-product" class="tab-content" >
             <div class="product-form">
                 <h2 class="form-header">Create New Product Listing</h2>
@@ -437,58 +464,73 @@ $conn->close();
     </div>
     
  <!-- Edit Product-->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h3>Edit Product</h3>
-            <form method="POST" action="" enctype="multipart/form-data">
-                <input type="hidden" id="edit_product_id" name="product_id">
-                
-                <div class="form-group">
-                    <label for="edit_product_name">Product Name</label>
-                    <input type="text" id="edit_product_name" name="edit_product_name" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_product_price">Price (₱)</label>
-                    <input type="number" id="edit_product_price" name="edit_product_price" class="form-control" 
-                        step="0.01" min="0.01" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_product_description">Description</label>
-                    <textarea id="edit_product_description" name="edit_product_description" class="form-control" required></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_product_condition">Condition</label>
-                    <select id="edit_product_condition" name="edit_product_condition" class="form-control" required>
-                        <option value="">Select Condition</option>
-                        <?php foreach($conditions as $condition): ?>
-                            <option value="<?= $condition ?>"><?= $condition ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="edit_product_image">Product Image</label>
-                    <div class="image-preview">
-                        <img id="editImagePreview" src="">
-                        <p id="editPreviewText">Current image</p>
-                        <div class="file-input-wrapper">
-                            <button class="file-input-button" type="button">Choose New Image (Optional)</button>
-                            <input type="file" id="edit_product_image" name="edit_product_image" accept="image/*" 
-                                onchange="previewImage(this, 'editImagePreview', 'editPreviewText')">
-                        </div>
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h3>Edit Product</h3>
+        <form method="POST" action="" enctype="multipart/form-data">
+            <input type="hidden" id="edit_product_id" name="product_id">
+            
+            <div class="form-group">
+                <label for="edit_product_name">Product Name</label>
+                <input type="text" id="edit_product_name" name="edit_product_name" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_product_price">Price (₱)</label>
+                <input type="number" id="edit_product_price" name="edit_product_price" class="form-control" 
+                       step="0.01" min="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_product_description">Description</label>
+                <textarea id="edit_product_description" name="edit_product_description" class="form-control" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_product_condition">Condition</label>
+                <select id="edit_product_condition" name="edit_product_condition" class="form-control" required>
+                    <option value="">Select Condition</option>
+                    <?php foreach($conditions as $condition): ?>
+                        <option value="<?= $condition ?>"><?= $condition ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit_product_image">Product Image</label>
+                <div class="image-preview">
+                    <img id="editImagePreview" src="">
+                    <p id="editPreviewText">Current image</p>
+                    <div class="file-input-wrapper">
+                        <button class="file-input-button" type="button">Choose New Image (Optional)</button>
+                        <input type="file" id="edit_product_image" name="edit_product_image" accept="image/*" 
+                              onchange="previewImage(this, 'editImagePreview', 'editPreviewText')">
                     </div>
                 </div>
-                
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-back" onclick="closeModal()">Cancel</button>
-                    <button type="submit" name="edit_product" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
-        </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-back" onclick="closeModal()">Cancel</button>
+                <button type="submit" name="edit_product" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
     </div>
+</div>
+<script>
+    <?php if ($edit_redirect && $edit_data): ?>
+    window.onload = function() {
+        switchTab('manage-products');
+        showEditModal(
+            '<?= $edit_data['listing_id'] ?>',
+            '<?= htmlspecialchars(addslashes($edit_data['product_name'])) ?>',
+            '<?= $edit_data['product_price'] ?>',
+            '<?= htmlspecialchars(addslashes($edit_data['product_description'])) ?>',
+            '<?= htmlspecialchars($edit_data['product_condition']) ?>',
+            '<?= htmlspecialchars($edit_data['product_image']) ?>'
+        );
+    };
+    <?php endif; ?>
+</script>
 </body>
-</html>
+</html> 
