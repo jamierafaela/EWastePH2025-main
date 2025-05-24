@@ -235,7 +235,7 @@ $_SESSION['csrf_token'] = $csrf_token;
 </div>
 
 
-
+<div class="container12">
     <div class="container1">
         <!-- Contact Section (Left Side) -->
         <section id="contact" class="section contact-section">
@@ -258,8 +258,10 @@ $_SESSION['csrf_token'] = $csrf_token;
         <!-- FAQ Section (Right Side) -->
         <section id="faq" class="section faq-section">
             <div class="faq-name">
-                <h1 class="faq-header">FAQ</h1>
-                <h1 class="faq-header"><b>Need Assistance?</b></h1>
+                <h1 class="faq-header1">
+                    <h1 class="faq-header">FAQ</h1>
+                    <h1 class="faq-header"><b>Need Assistance?</b></h1>
+                </h1>
                 <h2 class="faq-welcome">
                     Welcome to the E-WastePH Shop FAQ section! Here, we answer your most frequently asked questions about our electronic waste shop, where you can buy and sell e-waste scraps. We're committed to promoting sustainable practices by giving old electronics a new purpose.
                 </h2>
@@ -337,7 +339,7 @@ $_SESSION['csrf_token'] = $csrf_token;
             </div>
         </div>
     </div>
-
+</div>
 
 
 
