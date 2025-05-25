@@ -245,9 +245,13 @@ table, .data-table {
 }
 
 th, td, .data-table th, .data-table td {
-    padding: 15px 8px;
-    text-align: left;
+    padding: 15px 5px;
+    text-align: center;
     border-bottom: 1px solid var(--gray-medium);
+    align-items: center;
+    justify-content: center;
+    border: 1px solid red;
+    max-width: 20px;
 }
 
 th, .data-table th {

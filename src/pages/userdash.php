@@ -13,6 +13,21 @@ if ($conn->connect_error) {
 
 $user_id = $_SESSION['user_id'];
 
+// Fetch seller_id from sellers table based on user_id
+$current_seller_id = null;
+$seller_id_query = $conn->prepare("SELECT seller_id FROM sellers WHERE user_id = ?");
+if ($seller_id_query) {
+    $seller_id_query->bind_param("i", $user_id);
+    $seller_id_query->execute();
+    $seller_id_result = $seller_id_query->get_result();
+    if ($seller_id_row = $seller_id_result->fetch_assoc()) {
+        $current_seller_id = $seller_id_row['seller_id'];
+    }
+    $seller_id_query->close();
+} else {
+    error_log("Failed to prepare seller_id query in userdash.php for user_id: " . $user_id);
+}
+
 $profileCheckStmt = $conn->prepare("SELECT profile_completed FROM users WHERE user_id = ?");
 $profileCheckStmt->bind_param("i", $user_id);
 $profileCheckStmt->execute();
@@ -25,13 +40,15 @@ if (!isset($profileData['profile_completed']) || $profileData['profile_completed
 }
 
 $total_listed = 0;
-$list_query = $conn->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ?");
-if ($list_query) {
-    $list_query->bind_param("i", $user_id);
-    $list_query->execute();
-    $list_query->bind_result($total_listed);
-    $list_query->fetch();
-    $list_query->close();
+if ($current_seller_id !== null) {
+    $list_query = $conn->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ?");
+    if ($list_query) {
+        $list_query->bind_param("i", $current_seller_id);
+        $list_query->execute();
+        $list_query->bind_result($total_listed);
+        $list_query->fetch();
+        $list_query->close();
+    }
 }
 
 //items purchased
@@ -45,21 +62,24 @@ if ($purchase_query) {
     $purchase_query->close();
 }
 
-// Count total rejected listings
+    // Count total rejected listings
 $total_rejected = 0;
-$rejected_count_query = $conn->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ? AND product_status = 'Rejected'");
-if ($rejected_count_query) {
-    $rejected_count_query->bind_param("i", $user_id);
-    $rejected_count_query->execute();
-    $rejected_count_query->bind_result($total_rejected);
-    $rejected_count_query->fetch();
-    $rejected_count_query->close();
+if ($current_seller_id !== null) {
+    $rejected_count_query = $conn->prepare("SELECT COUNT(*) FROM listings WHERE seller_id = ? AND product_status = 'Rejected'");
+    if ($rejected_count_query) {
+        $rejected_count_query->bind_param("i", $current_seller_id);
+        $rejected_count_query->execute();
+        $rejected_count_query->bind_result($total_rejected);
+        $rejected_count_query->fetch();
+        $rejected_count_query->close();
+    }
 }
 //recent acts 
 $activities = array();
 
 // get recent listings
-$list_activity = $conn->prepare("
+if ($current_seller_id !== null) {
+    $list_activity = $conn->prepare("
         SELECT 'listed' AS type, product_name AS name, created_at AS activity_date 
         FROM listings 
         WHERE seller_id = ?
@@ -67,14 +87,15 @@ $list_activity = $conn->prepare("
         LIMIT 5
     ");
 
-if ($list_activity) {
-    $list_activity->bind_param("i", $user_id);
-    $list_activity->execute();
-    $result = $list_activity->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $activities[] = $row;
+    if ($list_activity) {
+        $list_activity->bind_param("i", $current_seller_id);
+        $list_activity->execute();
+        $result = $list_activity->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $activities[] = $row;
+        }
+        $list_activity->close();
     }
-    $list_activity->close();
 }
 
 // delete message
@@ -84,45 +105,49 @@ $delete_message = '';
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']) && is_numeric($_GET['id']) && isset($_GET['confirm']) && $_GET['confirm'] == 'yes') {
     $product_id = $_GET['id'];
 
-    $check_query = $conn->prepare("SELECT seller_id FROM listings WHERE listing_id = ?");
-    $check_query->bind_param("i", $product_id);
-    $check_query->execute();
-    $check_query->store_result();
+    // Check if the current user (via their seller_id) is the owner of the listing
+    if ($current_seller_id !== null) {
+        $check_query = $conn->prepare("SELECT seller_id FROM listings WHERE listing_id = ?");
+        $check_query->bind_param("i", $product_id);
+        $check_query->execute();
+        $check_query->store_result();
 
-    if ($check_query->num_rows > 0) {
-        $check_query->bind_result($seller_id);
-        $check_query->fetch();
+        if ($check_query->num_rows > 0) {
+            $check_query->bind_result($listing_seller_id);
+            $check_query->fetch();
 
-        if ($seller_id == $user_id) {
-            // Delete the product
-            $delete_query = $conn->prepare("DELETE FROM listings WHERE listing_id = ?");
-            $delete_query->bind_param("i", $product_id);
+            if ($listing_seller_id == $current_seller_id) {
+                // Delete the product
+                $delete_query = $conn->prepare("DELETE FROM listings WHERE listing_id = ?");
+                $delete_query->bind_param("i", $product_id);
 
-            if ($delete_query->execute()) {
-                $delete_message = '<div class="notification-message success-message">Your listing has been successfully deleted!</div>';
+                if ($delete_query->execute()) {
+                    $delete_message = '<div class="notification-message success-message">Your listing has been successfully deleted!</div>';
+                } else {
+                    $delete_message = '<div class="notification-message error-message">Error deleting listing. Please try again.</div>';
+                }
+                $delete_query->close();
             } else {
-                $delete_message = '<div class="notification-message error-message">Error deleting listing. Please try again.</div>';
+                $delete_message = '<div class="notification-message error-message">You are not authorized to delete this listing.</div>';
             }
-            $delete_query->close();
         } else {
-            $delete_message = '<div class="notification-message error-message">You are not authorized to delete this listing.</div>';
+            $delete_message = '<div class="notification-message error-message">Listing not found.</div>';
         }
+        $check_query->close();
     } else {
-        $delete_message = '<div class="notification-message error-message">Listing not found.</div>';
+        $delete_message = '<div class="notification-message error-message">Cannot delete listing: Seller details not found.</div>';
     }
-
-    $check_query->close();
 }
 
 //get recent purchase
 $purchase_activity = $conn->prepare("
-        SELECT 'purchased' AS type, oi.product_name AS name, o.order_date AS activity_date 
-        FROM orders o
-        JOIN order_items oi ON o.order_id = oi.order_id
-        WHERE o.user_id = ?
-        ORDER BY o.order_date DESC
-        LIMIT 5
-    ");
+    SELECT 'purchased' AS type, oi.product_name AS name, o.order_date AS activity_date 
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    WHERE o.user_id = ?
+    ORDER BY o.order_date DESC
+    LIMIT 5
+");
 
 if ($purchase_activity) {
     $purchase_activity->bind_param("i", $user_id);
@@ -135,59 +160,65 @@ if ($purchase_activity) {
 }
 
 $active_listings = array();
-$active_query = $conn->prepare("
+if ($current_seller_id !== null) {
+    $active_query = $conn->prepare("
         SELECT listing_id, product_name, product_price, created_at 
         FROM listings 
         WHERE seller_id = ? AND product_status = 'Pending Review'
         ORDER BY created_at DESC
     ");
 
-if ($active_query) {
-    $active_query->bind_param("i", $user_id);
-    $active_query->execute();
-    $result = $active_query->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $active_listings[] = $row;
+    if ($active_query) {
+        $active_query->bind_param("i", $current_seller_id);
+        $active_query->execute();
+        $result = $active_query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $active_listings[] = $row;
+        }
+        $active_query->close();
     }
-    $active_query->close();
 }
 
 // approved listing
 $sold_listings = array();
-$sold_query = $conn->prepare("
+if ($current_seller_id !== null) {
+    $sold_query = $conn->prepare("
         SELECT listing_id, product_name, product_price, created_at
         FROM listings 
         WHERE seller_id = ? AND product_status = 'Approved'
         ORDER BY created_at DESC
     ");
 
-if ($sold_query) {
-    $sold_query->bind_param("i", $user_id);
-    $sold_query->execute();
-    $result = $sold_query->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $sold_listings[] = $row;
+    if ($sold_query) {
+        $sold_query->bind_param("i", $current_seller_id);
+        $sold_query->execute();
+        $result = $sold_query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $sold_listings[] = $row;
+        }
+        $sold_query->close();
     }
-    $sold_query->close();
 }
 
-// rejected listings
+    // rejected listings
 $rejected_listings = array();
-$rejected_query = $conn->prepare("
-    SELECT listing_id, product_name, product_price, created_at, rejection_reason
-    FROM listings 
-    WHERE seller_id = ? AND product_status = 'Rejected'
-    ORDER BY created_at DESC
-");
+if ($current_seller_id !== null) {
+    $rejected_query = $conn->prepare("
+        SELECT listing_id, product_name, product_price, created_at, rejection_reason
+        FROM listings 
+        WHERE seller_id = ? AND product_status = 'Rejected'
+        ORDER BY created_at DESC
+    ");
 
-if ($rejected_query) {
-    $rejected_query->bind_param("i", $user_id);
-    $rejected_query->execute();
-    $result = $rejected_query->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $rejected_listings[] = $row;
+    if ($rejected_query) {
+        $rejected_query->bind_param("i", $current_seller_id);
+        $rejected_query->execute();
+        $result = $rejected_query->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $rejected_listings[] = $row;
+        }
+        $rejected_query->close();
     }
-    $rejected_query->close();
 }
 
 // Check if warning should be shown (if 3+ rejected listings)
@@ -236,10 +267,16 @@ if (isset($_SESSION['profile_success']) && $_SESSION['profile_success']) {
     unset($_SESSION['profile_success']);
     unset($_SESSION['profile_message']);
 }
+    $announcements_query = "SELECT a.* 
+                       FROM announcements a 
+                       ORDER BY a.created_at DESC 
+                       LIMIT 2";
+$announcements_result = $conn->query($announcements_query);
 
 $conn->close();
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -247,7 +284,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-WastePH User Dashboard</title>
-    <link rel="stylesheet" href="../styles/userDash.css">
+    <link rel="stylesheet" href="../styles/userdash.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         .activity-list {
@@ -297,47 +334,6 @@ $conn->close();
 
         .listings-container.active {
             display: block;
-        }
-
-        .listings-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .listings-table th,
-        .listings-table td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .listings-table th {
-            background-color: #f5f5f5;
-        }
-
-        .listings-table tr:hover {
-            background-color: #f9f9f9;
-        }
-
-        .listings-action {
-            margin: 5px 10px 5px 0;
-            padding: 8px 12px;
-            background-color: #f0f0f0;
-            color: #333;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
-        .listings-action:hover {
-            background-color: rgb(20, 123, 24);
-            color: #f0f0f0;
-        }
-
-        .listings-action.active {
-            background-color: rgb(20, 123, 24);
-            color: white;
         }
 
         .action-btn {
@@ -424,29 +420,6 @@ $conn->close();
             font-weight: 900;
             margin-right: 10px;
             font-size: 1.2em;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 5px;
-            width: 400px;
-            max-width: 90%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: modalAppear 0.3s ease-out;
         }
 
         @keyframes modalAppear {
@@ -586,6 +559,222 @@ $conn->close();
             margin-top: 10px;
             font-weight: bold;
             cursor: pointer;
+            }
+            .warning-message {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffeeba;
+}
+
+.warning-message:before {
+    content: "\f071";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.rejection-warning {
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #c62828;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-badge.rejected {
+    background-color: #ffebee;
+    color: #c62828;
+}
+:root {
+    --primary-color: #2e7d32;
+    --primary-light: #4caf50;
+    --primary-dark: #1b5e20;
+    --success: #4caf50;
+    --accent: #ff9800;
+    --gray-light: #f0f4f1;
+    --gray-medium: #e0e0e0;
+    --white: #ffffff;
+    --black: #333333;
+    --background: #f0f2f0;
+    --card-bg: #ffffff;
+    --text-dark: #212121;
+    --text-light: #ffffff;
+    --text-muted: #666666;
+    --border-color: #e0e0e0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+}
+
+.announcements-container {
+    background: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    padding: 0;
+}
+
+
+
+.announcements-list {
+    padding: 0;
+}
+
+.announcement-item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 25px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.announcement-item:last-child {
+    border-bottom: none;
+}
+
+.announcement-item:hover {
+    background: var(--gray-light);
+    transform: translateX(5px);
+}
+
+.announcement-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+}
+
+.announcement-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.announcement-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.announcement-body {
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.announcement-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 15px;
+}
+
+.announcement-date {
+    text-align: right;
+    line-height: 1.3;
+}
+
+.announcement-date small {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+
+
+.announcement-date {
+    font-style: italic;
+}
+
+.announcement-badge {
+    background: var(--success);
+    color: var(--white);
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 10px;
+}
+
+.announcement-badge.new {
+    background: var(--success);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.no-announcements {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.no-announcements i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.no-announcements h4 {
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+
+
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .announcements-container {
+        margin: 0 -10px 20px -10px;
+        border-radius: 10px;
+    }
+    
+    .announcements-header {
+        padding: 15px 20px;
+    }
+    
+    .announcements-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .announcement-item {
+        padding: 15px 20px;
+    }
+    
+    .announcement-meta {
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .announcement-badge {
+        margin-left: 0;
+        margin-top: 5px;
+    }
         }
     </style>
     </style>
@@ -623,6 +812,7 @@ $conn->close();
                     </div>
                     <div class="profile-details">
                         <h2 class="username"> <?php echo htmlspecialchars($userDetails['full_name'] ?? 'Guest'); ?> </h2>
+                        <p><?php echo htmlspecialchars($userDetails['email'] ?? ''); ?></p>
                         <button id="logoutBtn" class="btn" onclick="window.location.href='logout.php'">Log out</button>
                     </div>
                 </div>
@@ -643,6 +833,7 @@ $conn->close();
                         <h3 class="section-title">Settings</h3>
                         <a href="account_settings.php" class="sidebar-link">Account Settings<i class="fas fa-cog"></i></a>
                         <a href="privacy_settings.php   " class="sidebar-link">Privacy Settings<i class="fas fa-shield-alt"></i></a>
+                        <a href="  " class="sidebar-link">Terms and Condition</a>
                     </div>
                 </div>
             </aside>
@@ -650,10 +841,10 @@ $conn->close();
             <!-- Main Content -->
             <main class="main-content">
                 <?php if ($show_rejection_warning): ?>
-                    <div class="notification-message warning-message">
-                        <i class=""></i> Warning: You have multiple rejected listings. Please review our guidelines carefully before submitting new items.
-                    </div>
-                <?php endif; ?>
+    <div class="notification-message warning-message">
+        <i class=""></i> Warning: You have multiple rejected listings. Please review our guidelines carefully before submitting new items.
+    </div>
+<?php endif; ?>
                 <?php
                 if (!empty($delete_message)) {
                     echo $delete_message;
@@ -664,14 +855,14 @@ $conn->close();
                     <h2 class="card-header">Dashboard Overview</h2>
                     <div class="stats-container">
                         <div class="stat-card">
-                            <h3>Total Items Listed for Sale</h3>
                             <p id="totalListed"><?= $total_listed ?></p>
+                            <h3>Total Items Listed for Sale</h3>
                         </div>
                         <div class="stat-card">
+                            <p id="totalListed"><?= $total_listed ?></p>
                             <h3>Total Items Purchased</h3>
-                            <p id="totalPurchased"><?= $total_purchased ?></p>
                         </div>
-
+                            
                     </div>
                     <div class="stats-container" style="margin-top: 15px;">
                         <div class="stat-card">
@@ -708,7 +899,7 @@ $conn->close();
                         <a href="#" class="listings-action" id="active-tab">Pending Listings</a>
                         <a href="sell.php" class="listings-action">Add New Listing</a>
                         <a href="#" class="listings-action" id="sold-tab">Approved Listings</a>
-                        <a href="#" class="listings-action" id="rejected-tab">Rejected Listings</a>
+                            <a href="#" class="listings-action" id="rejected-tab">Rejected Listings</a>
                     </div>
 
                     <!-- Pending Listings Table -->
@@ -766,46 +957,46 @@ $conn->close();
                                             <td>₱<?= number_format($listing['product_price'], 2) ?></td>
                                             <td><?= date("M d, Y", strtotime($listing['created_at'])) ?></td>
                                             <td><span class="status-badge approved">Approved</span></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php endif; ?>
-                    </div>
-                    <!-- Rejected Listings Table -->
-                    <div id="rejected-listings" class="listings-container">
-                        <?php if (empty($rejected_listings)): ?>
-                            <p>You have no rejected listings</p>
-                        <?php else: ?>
-                            <?php if ($show_rejection_warning): ?>
-                                <div class="notification-message warning-message">
-                                    <i class=""></i> Warning: You have multiple rejected listings. Please review our guidelines carefully before submitting new items.
-                                </div>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
                             <?php endif; ?>
-                            <table class="listings-table">
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Price</th>
-                                        <th>Date Listed</th>
-                                        <th>Rejection Reason</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($rejected_listings as $listing): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($listing['product_name']) ?></td>
-                                            <td>₱<?= number_format($listing['product_price'], 2) ?></td>
-                                            <td><?= date("M d, Y", strtotime($listing['created_at'])) ?></td>
-                                            <td><?= htmlspecialchars($listing['rejection_reason'] ?? 'No reason provided') ?></td>
-                                            <td>
-
-                                                <a href="#" class="action-btn delete-btn"
-                                                    data-id="<?= $listing['listing_id'] ?>"
-                                                    data-name="<?= htmlspecialchars($listing['product_name']) ?>"
-                                                    onclick="showDeleteModal(this)">Delete</a>
-                                            </td>
+                        </div>
+                        <!-- Rejected Listings Table -->
+<div id="rejected-listings" class="listings-container">
+    <?php if (empty($rejected_listings)): ?>
+        <p>You have no rejected listings</p>
+    <?php else: ?>
+        <?php if ($show_rejection_warning): ?>
+            <div class="notification-message warning-message">
+                <i class=""></i> Warning: You have multiple rejected listings. Please review our guidelines carefully before submitting new items.
+            </div>
+        <?php endif; ?>
+        <table class="listings-table">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Date Listed</th>
+                    <th>Rejection Reason</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rejected_listings as $listing): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($listing['product_name']) ?></td>
+                        <td>₱<?= number_format($listing['product_price'], 2) ?></td>
+                        <td><?= date("M d, Y", strtotime($listing['created_at'])) ?></td>
+                        <td><?= htmlspecialchars($listing['rejection_reason'] ?? 'No reason provided') ?></td>
+                        <td>
+                        
+                            <a href="#" class="action-btn delete-btn"
+                               data-id="<?= $listing['listing_id'] ?>"
+                               data-name="<?= htmlspecialchars($listing['product_name']) ?>"
+                               onclick="showDeleteModal(this)">Delete</a>
+                        </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -824,8 +1015,80 @@ $conn->close();
                 <!-- Admin Announcements -->
                 <section class="card">
                     <h2 class="card-header">Admin Announcements & Alerts</h2>
-                    <div id="announcements">
-                        <p>No new announcements</p>
+                     <div class="announcements-container">
+    <div class="announcements-list">
+        <?php if ($announcements_result && $announcements_result->num_rows > 0): ?>
+            <?php 
+            $current_time = new DateTime();
+            $announcements_array = [];
+            while ($announcement = $announcements_result->fetch_assoc()) {
+                $announcements_array[] = $announcement;
+            }
+            
+            foreach ($announcements_array as $index => $announcement): 
+                $created_time = new DateTime($announcement['created_at']);
+                $updated_time = $announcement['updated_at'] ? new DateTime($announcement['updated_at']) : null;
+                $time_diff = $current_time->diff($created_time);
+                $is_new = $time_diff->days < 7; // Mark as new if less than 7 days old
+                
+                // Determine which date to show and label
+                $display_time = $created_time;
+                $time_label = "Posted";
+                
+                if ($updated_time && $updated_time > $created_time) {
+                    $display_time = $updated_time;
+                    $time_label = "Updated";
+                    $time_diff = $current_time->diff($updated_time);
+                    $is_new = $time_diff->days < 7; // Update new status based on update time
+                }
+                
+                // Format date for display (include full date)
+                $full_date = $display_time->format('M j, Y \a\t g:i A');
+                if ($time_diff->days == 0) {
+                    $relative_date = "Today";
+                } elseif ($time_diff->days == 1) {
+                    $relative_date = "Yesterday";
+                } elseif ($time_diff->days < 7) {
+                    $relative_date = $time_diff->days . " days ago";
+                } else {
+                    $relative_date = $display_time->format('M j, Y');
+                }
+                
+                // Determine announcement label
+                $announcement_label = ($index === 0) ? "Latest Announcement" : "Last Announcement";
+            ?>
+                <div class="announcement-item">
+                    <div class="announcement-label">
+                        <?php echo $announcement_label; ?>
+                        <?php if ($is_new): ?>
+                            <span class="announcement-badge new">New</span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="announcement-title">
+                        <?php echo htmlspecialchars($announcement['title']); ?>
+                    </div>
+                    
+                    <div class="announcement-body">
+                        <?php echo nl2br(htmlspecialchars($announcement['body'])); ?>
+                    </div>
+                    
+                    <div class="announcement-meta">
+                        <div class="announcement-date">
+                            <strong><?php echo $time_label . ' ' . $relative_date; ?></strong><br>
+                            <small><?php echo $full_date; ?></small>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="no-announcements">
+                <i class="fas fa-bullhorn"></i>
+                <h4>No Announcements</h4>
+                <p>There are no announcements at this time.</p>
+            </div>
+        <?php endif; ?>
+    </div>
                     </div>
                 </section>
             </main>
@@ -857,33 +1120,46 @@ $conn->close();
             </div>
         </div>
     <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function showActiveListings() {
                 document.getElementById('active-listings').classList.add('active');
                 document.getElementById('sold-listings').classList.remove('active');
-                document.getElementById('rejected-listings').classList.remove('active');
+        document.getElementById('rejected-listings').classList.remove('active');
                 document.getElementById('active-tab').classList.add('active');
                 document.getElementById('sold-tab').classList.remove('active');
-                document.getElementById('rejected-tab').classList.remove('active');
+        document.getElementById('rejected-tab').classList.remove('active');
             }
 
             function showSoldListings() {
                 document.getElementById('active-listings').classList.remove('active');
                 document.getElementById('sold-listings').classList.add('active');
-                document.getElementById('rejected-listings').classList.remove('active');
+        document.getElementById('rejected-listings').classList.remove('active');
                 document.getElementById('active-tab').classList.remove('active');
                 document.getElementById('sold-tab').classList.add('active');
-                document.getElementById('rejected-tab').classList.remove('active');
-            }
-
-            function showRejectedListings() {
-                document.getElementById('active-listings').classList.remove('active');
-                document.getElementById('sold-listings').classList.remove('active');
-                document.getElementById('rejected-listings').classList.add('active');
-                document.getElementById('active-tab').classList.remove('active');
-                document.getElementById('sold-tab').classList.remove('active');
-                document.getElementById('rejected-tab').classList.add('active');
+        document.getElementById('rejected-tab').classList.remove('active');
+    }
+    
+    function showRejectedListings() {
+        document.getElementById('active-listings').classList.remove('active');
+        document.getElementById('sold-listings').classList.remove('active');
+        document.getElementById('rejected-listings').classList.add('active');
+        document.getElementById('active-tab').classList.remove('active');
+        document.getElementById('sold-tab').classList.remove('active');
+        document.getElementById('rejected-tab').classList.add('active');
             }
 
             document.getElementById('active-tab').addEventListener('click', function(e) {
@@ -895,11 +1171,11 @@ $conn->close();
                 e.preventDefault();
                 showSoldListings();
             });
-
-            document.getElementById('rejected-tab').addEventListener('click', function(e) {
-                e.preventDefault();
-                showRejectedListings();
-            });
+    
+    document.getElementById('rejected-tab').addEventListener('click', function(e) {
+        e.preventDefault();
+        showRejectedListings();
+    });
 
             showActiveListings();
 
@@ -937,6 +1213,19 @@ $conn->close();
                 closeModal();
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+            
     </script>
 
 </body>

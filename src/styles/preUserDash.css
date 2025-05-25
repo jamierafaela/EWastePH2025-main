@@ -385,6 +385,6 @@ button[type="reset"]:hover {
 }
 .form-group small{
     margin: 5px;
-    color: gray;
+    color: rgba(255, 255, 255, 0.758);
     text-decoration: italic;
 }

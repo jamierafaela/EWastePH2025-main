@@ -403,7 +403,7 @@ section {
 }
 .faq-detail ul, p{
     list-style: none;
-    text-align: left;
+    text-align: center;
 }
 
 .faq-trigger {
@@ -860,7 +860,7 @@ section {
 
 /*UserDAsh*/
 .userDashSec{
-    background:linear-gradient(to bottom, rgba(191, 225, 188, 0.8), rgba(72, 169, 98, 0.7));
+    background:linear-gradient(160deg, #b6e7c3f1, #37914ff1);
     overflow: hidden;
 }
 
@@ -894,6 +894,9 @@ section {
     color: white;
     padding: 20px;
     border-radius: 10px;
+    margin-top: 50px;
+    height: 730px;
+    position: fixed;
 }
 .sidebar-link{
     justify-content: space-between;
@@ -972,7 +975,8 @@ section {
 .main-content {
     flex: 1;
     padding: 20px;
-    margin-top:50px ;
+    margin-top:50px;
+    margin-left: 270px; /* Adjusted to account for the sidebar width */
 }
 
 .card{
@@ -1009,13 +1013,19 @@ section {
 
 .stat-card p {
     text-align: center;
-    color: #5c5c55;
+    color: #2f3935;
+    font-size: 30px;
+    font-weight: bold;
 }
-
+.stat-card h3{
+    color: #5c5c55c9;
+    font-size: 15px;
+}
 .listings-actions, .widget-grid {
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .listings-actions {
@@ -1038,6 +1048,30 @@ section {
     background: #f1c40f;
     color: #2a5d37;
 }
+
+
+.listings-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+
+}
+
+        .listings-table th,
+        .listings-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .listings-table th {
+            background-color: #f5f5f5;
+        }
+
+        .listings-table tr:hover {
+            background-color: #f0f0f0;
+        }
+
 
 
 

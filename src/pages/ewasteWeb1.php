@@ -1,7 +1,5 @@
 <?php
-//=====================================================
 // DATABASE CONNECTION
-//=====================================================
 $conn = new mysqli("localhost", "root", "", "ewaste_db");
 
 if ($conn->connect_error) {
@@ -11,9 +9,8 @@ if ($conn->connect_error) {
 $sql = "SELECT * FROM products ORDER BY product_id DESC";
 $result = $conn->query($sql);
 
-//=====================================================
+
 // SESSION MANAGEMENT
-//=====================================================
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $justLoggedIn = false;

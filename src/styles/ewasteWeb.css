@@ -129,7 +129,7 @@ section {
 
 
 .part1 {
-     background: linear-gradient(135deg, #40916c  0%, #152e22 100%);
+    background: linear-gradient(135deg, #40916c  0%, #152e22 100%);
     padding-bottom: 100px;
 }
 
@@ -1200,7 +1200,7 @@ button[type="submit"] {
     font-size: 18px;
     transition: background-color 0.3s;
     margin: 15px auto 0;
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.331);
 }
 
 .profile-contents .btn:hover,

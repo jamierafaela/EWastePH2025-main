@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-WastePH Login System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .demo-container {
+            text-align: center;
+            color: white;
+            z-index: 1;
+        }
+
+        .demo-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .demo-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .demo-btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            min-width: 140px;
+        }
+
+        .login-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .login-btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Popup Overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-overlay.show {
+            display: flex;
+        }
+
+        /* Popup Container */
+        .popup {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: popupSlide 0.4s ease;
+            overflow: hidden;
+        }
+
+        /* Popup Header */
+        .popup-header {
+            background: white;
+            color: #333;
+            padding-top: 30px;
+            padding-bottom: 3px;
+            text-align: center;
+            position: relative;
+        }
+
+        .popup-header.logout {
+            background: white;
+            color: #333;
+        }
+
+        .popup-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .popup-header p {
+            opacity: 0.9;
+            font-size: 0.3rem;
+        }
+
+        /* Close Button */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Popup Body */
+        .popup-body {
+            padding-bottom:20px;
+            text-align: center;
+        }
+
+        .popup-message {
+            font-size: .9rem;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .user-name {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .continue-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .continue-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .continue-btn.logout {
+            background: #9b9b9bc1;
+        }
+
+        .continue-btn.logout:hover {
+            background: #757474bf;
+;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes popupSlide {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40%, 43% {
+                transform: translateY(-10px);
+            }
+            70% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .demo-title {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .popup {
+                margin: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Demo Interface -->
+    <div class="demo-container">
+        <h1 class="demo-title">E-WastePH</h1>
+        <p class="demo-subtitle">Electronic Waste Management System</p>
+        <div class="button-group">
+            <button class="demo-btn login-btn" onclick="showLoginPopup()">Simulate Login</button>
+            <button class="demo-btn logout-btn" onclick="showLogoutPopup()">Simulate Logout</button>
+        </div>
+    </div>
+
+    <!-- Login Success Popup -->
+    <div class="popup-overlay" id="loginPopup">
+        <div class="popup">
+            <div class="popup-header">
+                <button class="close-btn" onclick="closePopup('loginPopup')">&times;</button>
+                <h2>Welcome, <span class="user-name">Jamie Rafela</span>!</h2>
+            </div>
+            <div class="popup-body">
+                <div class="popup-message">
+                    You have successfully logged in to E-WastePH.
+                </div>
+                <button class="continue-btn" onclick="closePopup('loginPopup')">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Success Popup -->
+    <div class="popup-overlay" id="logoutPopup">
+        <div class="popup">
+            <div class="popup-header logout">
+                <button class="close-btn" onclick="closePopup('logoutPopup')">&times;</button>
+                <h2>Goodbye, <span class="user-name">Jamie Rafela</span>!</h2>
+            </div>
+            <div class="popup-body">
+                <div class="popup-message">
+                    You have been successfully logged out from E-WastePH.
+                </div>
+                <button class="continue-btn logout" onclick="closePopup('logoutPopup')">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showLoginPopup() {
+            const popup = document.getElementById('loginPopup');
+            popup.classList.add('show');
+        }
+
+        function showLogoutPopup() {
+            const popup = document.getElementById('logoutPopup');
+            popup.classList.add('show');
+        }
+
+        function closePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            popup.classList.remove('show');
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('popup-overlay')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const openPopup = document.querySelector('.popup-overlay.show');
+                if (openPopup) {
+                    openPopup.classList.remove('show');
+                }
+            }
+        });
+
+        // Simulate automatic login popup on page load (for demo purposes)
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                // Uncomment the line below to show login popup automatically
+                // showLoginPopup();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
