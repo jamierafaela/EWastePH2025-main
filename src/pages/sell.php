@@ -634,8 +634,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                 </div>
 
                 <div class="product-form">
-                    <h2 class="form-header">Create New Product Listing</h2>
-
+    
                     <form method="POST" action="" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="product_name">Product Name</label>
