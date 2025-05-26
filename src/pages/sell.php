@@ -622,7 +622,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
             <?php endif; ?>
         </div>
 
-        <!-- Add Product Tab -->
+        <!-- Add Productt Tab -->
         <div id="add-product" class="tab-content">
             <?php if ($has_gcash_details): ?>
                 <!-- Listing Policy Notice -->
