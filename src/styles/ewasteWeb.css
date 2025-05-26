@@ -762,6 +762,8 @@ section {
     margin-bottom: 15px;
     line-height: 1.6;
     color: #333;
+    text-align: left;
+    margin-left:25px;
 }
 
 .faq-detail ul {
@@ -773,6 +775,9 @@ section {
     margin-bottom: 8px;
     line-height: 1.5;
     color: #555;
+    list-style: none;
+    text-align: left;
+    margin-left:30px;
 }
 
 /* Modal Styles */

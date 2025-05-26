@@ -323,8 +323,8 @@ $_SESSION['csrf_token'] = $csrf_token;
                     </label>
                     <div class="faq-detail">
                         <ul>
-                            <li>Step 1: Create an account on our platform.</li>
-                            <li>Step 2: List your e-waste with photos and descriptions.</li>
+                            <li><strong>Step 1:</strong> Create an account on our platform.</li>
+                            <li><strong>Step 2:</strong> List your e-waste with photos and descriptions.</li>
                             <li>Step 3: Set a price or choose to recycle it for free.</li>
                             <li>Step 4: Connect with buyers or schedule a pickup/drop-off for recycling.</li>
                         </ul>

@@ -508,10 +508,10 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
         <div class="tabs-container">
             <ul class="tabs-nav">
                 <li class="tab-item active" data-tab="manage-products" onclick="switchTab('manage-products')">
-                    <i class="fas fa-list"></i> Manage Products
+                    <i class="fas fa-list">Manage Products</i>
                 </li>
                 <li class="tab-item" data-tab="add-product" onclick="switchTab('add-product')">
-                    <i class="fas fa-plus-circle"></i> Add New Product
+                    <i class="fas fa-plus-circle"> Add New Product</i>
                 </li>
             </ul>
         </div>
@@ -617,7 +617,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
 
                 <div class="product-form">
                     <h2 class="form-header">Create New Product Listing</h2>
-
+                    <div class="addProductForm">
                     <form method="POST" action="" enctype="multipart/form-data">
                         <div class="form-row1">
                             <label for="product_name">Product Name</label>
@@ -665,6 +665,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                             <button type="button" onclick="switchTab('manage-products')" class="btn btn-secondary">Cancel</button>
                         </div>
                     </form>
+                    
                 </div>
             <?php else: ?>
                 <div class="empty-state">
