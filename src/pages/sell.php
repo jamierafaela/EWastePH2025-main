@@ -292,6 +292,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['create'])) {
                         );
                         
                         if ($insert_query->execute()) {
+                            // Check current role and update if necessary
+                            $role_check_query = $conn->prepare("SELECT role FROM users WHERE user_id = ?");
+                            $role_check_query->bind_param("i", $user_id);
+                            $role_check_query->execute();
+                            $role_result = $role_check_query->get_result();
+                            $current_user_role = $role_result->fetch_assoc()['role'];
+                            $role_check_query->close();
+
+                            if ($current_user_role !== 'seller') {
+                                $update_role_query = $conn->prepare("UPDATE users SET role = 'seller' WHERE user_id = ?");
+                                $update_role_query->bind_param("i", $user_id);
+                                $update_role_query->execute();
+                                $update_role_query->close();
+                                // Optionally, you can set a session variable or log this change
+                                $_SESSION['role_updated_to_seller'] = true; 
+                            }
+
                             $_SESSION['success_message'] = "Product listed successfully!";
                             header("Location: " . $_SERVER['PHP_SELF'] . "?tab=manage-products");
                             exit();
@@ -456,6 +473,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
             min-width: 80px;
         }
 
+
         /* Custom Popup Styles - REMOVED AS PER NEW APPROACH */
     </style>
   
@@ -508,10 +526,10 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
         <div class="tabs-container">
             <ul class="tabs-nav">
                 <li class="tab-item active" data-tab="manage-products" onclick="switchTab('manage-products')">
-                    <i class="fas fa-list">Manage Products</i>
+                    <i class="fas fa-list"> Manage Products</i>
                 </li>
                 <li class="tab-item" data-tab="add-product" onclick="switchTab('add-product')">
-                    <i class="fas fa-plus-circle"> Add New Product</i>
+                    <i class="fas fa-plus-circle">Add New Product</i> 
                 </li>
             </ul>
         </div>
@@ -617,26 +635,29 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
 
                 <div class="product-form">
                     <h2 class="form-header">Create New Product Listing</h2>
-                    <div class="addProductForm">
+
                     <form method="POST" action="" enctype="multipart/form-data">
-                        <div class="form-row1">
+                        <div class="form-group">
                             <label for="product_name">Product Name</label>
                             <input type="text" id="product_name" name="product_name" class="form-control"
                                 value="<?= isset($_POST['product_name']) ? htmlspecialchars($_POST['product_name']) : '' ?>"
                                 placeholder="Enter product name" required>
-                       
+                        </div>
 
+                        <div class="form-group">
                             <label for="product_price">Price (₱)</label>
                             <input type="number" id="product_price" name="product_price" class="form-control"
                                 value="<?= isset($_POST['product_price']) ? $_POST['product_price'] : '' ?>"
                                 step="0.01" min="0.01" placeholder="Enter product price" required>
                         </div>
 
-                        <div class="form-row1">
+                        <div class="form-group">
                             <label for="product_description">Description</label>
                             <textarea id="product_description" name="product_description" class="form-control"
                                 placeholder="Describe your product in detail...include the quantity" required><?= isset($_POST['product_description']) ? htmlspecialchars($_POST['product_description']) : '' ?></textarea>
-                        
+                        </div>
+
+                        <div class="form-group">
                             <label for="product_condition">Condition</label>
                             <select id="product_condition" name="product_condition" class="form-control" required>
                                 <option value="">Select Condition</option>
@@ -665,7 +686,6 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                             <button type="button" onclick="switchTab('manage-products')" class="btn btn-secondary">Cancel</button>
                         </div>
                     </form>
-                    
                 </div>
             <?php else: ?>
                 <div class="empty-state">
@@ -767,10 +787,11 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
         </div>
 
         <!-- Listing Policy Modal -->
-        <div id="policyModal" class="modal">
+        <div id="policyModal" class="modal" style="display: none;">
             <div class="modal-content policy-modal">
-                <h2><i class="fas fa-recycle"></i> EwastePH Listing Policy & Terms <span class="modal-close" onclick="closeModal()">&times;</span>
-                </h2>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+                <h2><i class="fas fa-recycle"></i> EwastePH Listing Policy & Terms</h2>
+
                 <div class="policy-sections">
                     <div class="policy-section">
                         <h3><i class="fas fa-check-circle"></i> Accepted E-Waste Items</h3>
@@ -818,19 +839,19 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                         <h3><i class="fas fa-gavel"></i> Policy Violations & Consequences</h3>
                         <div class="violation-levels">
                             <div class="violation-level">
-                                <h4>Falsifying Information:</h4>
+                                <strong>Falsifying Information:</strong>
                                 <p>Providing false descriptions, fake photos, or misrepresenting item condition is strictly prohibited and will result in immediate listing removal and account warning.</p>
                             </div>
                             <div class="violation-level">
-                                <h4>First Offense:</h4>
+                                <strong>First Offense:</strong>
                                 <p>Official warning notice and listing removal</p>
                             </div>
                             <div class="violation-level">
-                                <h4>Repeated Violations:</h4>
+                                <strong>Repeated Violations:</strong>
                                 <p>Additional warnings with temporary listing restrictions</p>
                             </div>
                             <div class="violation-level severe">
-                                <h4>Persistent Violations:</h4>
+                                <strong>Persistent Violations:</strong>
                                 <p>Permanent account termination after multiple warnings</p>
                             </div>
                         </div>
@@ -851,8 +872,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                     </div>
 
                     <div class="policy-footer">
-                        <p class="footers">EwasteHub is dedicated to responsible electronic waste recycling and reuse. 
-                            By using our platform, you agree to these terms and conditions. We reserve the right to modify this policy at any time. Continued use of the platform constitutes acceptance of any changes.</p>
+                        <p><strong>EwasteHub is dedicated to responsible electronic waste recycling and reuse. By using our platform, you agree to these terms and conditions. We reserve the right to modify this policy at any time. Continued use of the platform constitutes acceptance of any changes.</strong></p>
                         <p><em>Last updated: <?= date('F Y') ?></em></p>
                     </div>
                 </div>
@@ -938,7 +958,7 @@ window.policyAgreed = <?= isset($_SESSION['policy_agreed']) && $_SESSION['policy
                                 </div>
 
                             <div class="form-navigation">
-                                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Close</button>
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
                                 <button type="submit" name="save_gcash" class="btn btn-success">Save Details</button>
                             </div>
                     </div>
@@ -1656,30 +1676,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Auto-hide PHP-generated error alerts
-    // Targets any .alert-danger within .container that wasn't dynamically added by showInPageAlert
+   
     const phpErrorAlert = document.querySelector('.container > .alert.alert-danger:not(.dynamic-page-alert)');
     if (phpErrorAlert) {
          setTimeout(() => {
             if (phpErrorAlert.parentNode) {
                 phpErrorAlert.parentNode.removeChild(phpErrorAlert);
             }
-        }, 3500); // Disappear after 3.5 seconds
+        }, 3500);
     }
 
     // Initialize page state
     const hasGcashDetails = window.hasGcashDetails || false;
     const policyAgreed = window.policyAgreed || false;
-    const editRedirect = <?= $edit_redirect ? 'true' : 'false' ?>; // Get PHP variable
-    const editData = <?= $edit_data ? json_encode($edit_data) : 'null' ?>; // Get PHP variable
+    const editRedirect = <?= $edit_redirect ? 'true' : 'false' ?>; 
+    const editData = <?= $edit_data ? json_encode($edit_data) : 'null' ?>;
 
-    // Check for success message from PHP (via session)
     <?php if (isset($success_message) && !empty($success_message) && !isset($_POST['agree_to_policy'])):
-        // Only show PHP session success message if it's NOT from the policy agreement AJAX response,
-        // as that will be handled by showInPageAlert in JS.
     ?>
-    // The PHP success message is already rendered as a div with class alert-success.
-    // We can make it self-removing if needed, or let showInPageAlert handle all dynamic messages.
-    // For now, relying on the PHP rendered div.
     <?php endif; ?>
 
     if (editRedirect && editData) {

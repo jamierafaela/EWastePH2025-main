@@ -500,6 +500,8 @@ section {
 
 
 
+
+
 /*policy*/
 .policy-modal h2{   
     background: linear-gradient(135deg, #52b569 0%, #4a9c5a 100%);
@@ -540,8 +542,8 @@ section {
     margin-left: 50px;
 }
  .policy-footer {
-            padding: 40px 30px;
-            border-radius: 0 0 12px 12px;
+    padding: 40px 30px;
+    border-radius: 0 0 12px 12px;
             border-top: 1px solid #e8e8e8;
             display: flex;
             flex-direction: column;
@@ -588,22 +590,34 @@ section {
 }
 .empty-state {
     text-align: center;
-    padding: 40px 20px;
+    padding: 40px 90px;
     background-color: #ffffff;
     border-radius: 8px;
     margin-top: 20px;
     box-shadow: 3px 8px 12px rgba(0, 0, 0, 0.1);
     height: 400px;
 }
+.fa-box-open{
+    margin-top: 62px;
+}
 
 .empty-state i {
     font-size: 60px;
     color: #93d3a1;
-    margin-bottom: 20px;
+}
+.empty-state .fa-plus-circle{
+    font-size: 30px;
+    color: #93d3a1;
+    padding-top: 10px;
 }
 .tab-item i{
     color: rgb(255, 255, 255);
     font-family: 'Segoe UI';
+}
+.btn-add{
+    border:1px solid aqua;
+    align-items: center;
+    padding-bottom: 15px;
 }
 
 .empty-state h3 {
@@ -614,6 +628,7 @@ section {
 .empty-state p {
     color: #757575;
     margin-bottom: 20px;
+    font-style: italic
 }
 
 /* Form styling for add product */
@@ -643,7 +658,7 @@ section {
 
 .form-control {
     width: 100% !important; 
-    max-width: none; /
+    max-width: none; 
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -665,17 +680,7 @@ section {
     display: flex;
     gap: 15px;
 }
-.addProductForm{
-    background: aqua;
-}
-.form-row1 .form-control{
-    max-width: 420px;
-    padding: 15px;
-}
-.form-row1 .form-control label{
-    border: 1px solid red;
 
-}
 
 .form-row > div {
     flex: 1;
