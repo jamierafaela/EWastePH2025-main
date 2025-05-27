@@ -224,7 +224,7 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
 
         .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
             color: white;
             padding: 15px 20px;
             display: flex;
@@ -273,14 +273,14 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
 
         .actual-modal-content h1 {
-            color: #667eea;
+            color: #65c476;
             font-size: 1.5rem;
             margin-bottom: 10px;
             text-align: center;
         }
 
         .actual-modal-content h2 {
-            color: #667eea;
+            color: #65c476;
             font-size: 1.2rem;
             margin-top: 20px;
             margin-bottom: 10px;
@@ -324,7 +324,6 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
 
         .contact-info {
-            background-color: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
@@ -349,7 +348,7 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
 
         .terms-link:hover {
-            color: #5a6fd8;
+            color:rgb(90, 216, 126);
         }
 
         /* Scrollbar Styling */
@@ -362,12 +361,12 @@ $_SESSION['csrf_token'] = $csrf_token;
         }
 
         .modal-body-content::-webkit-scrollbar-thumb {
-            background: #667eea;
+            background:rgb(102, 234, 157);
             border-radius: 4px;
         }
 
         .modal-body-content::-webkit-scrollbar-thumb:hover {
-            background: #5a6fd8;
+            background:rgb(90, 216, 122);
         }
 
 </style>
@@ -1152,7 +1151,7 @@ $_SESSION['csrf_token'] = $csrf_token;
             <a href="#" onclick="openTermsModal(event)">Privacy Policy</a>
         </div>
         <div class="footer-social">
-            <a href="https://www.facebook.com/yourpage" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=100094598050889&mibextid=ZbWKwL  " target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="https://twitter.com/yourprofile" target="_blank"><i class="fab fa-twitter"></i></a>
             <a href="https://www.instagram.com/yourprofile" target="_blank"><i class="fab fa-instagram"></i></a>
         </div>

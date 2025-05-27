@@ -890,7 +890,7 @@ section {
 
 .sidebar {
     width: 250px;
-    background: #2a5d37;
+    background: linear-gradient(45deg, #2a5d37, #299329);
     color: white;
     padding: 20px;
     border-radius: 10px;

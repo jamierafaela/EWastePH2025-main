@@ -1040,16 +1040,6 @@ $conn->close();
                 <!-- Sidebar Menu -->
                 <div class="sidebar-menu">
                     <div class="sidebar-menu-section">
-                        <h3 class="section-title">View</h3>
-                        <a href="#" class="sidebar-link">Likes<i class="fas fa-heart"></i></a>
-                        <a href="#" class="sidebar-link">Wishlist<i class="fas fa-star"></i></a>
-                        <a href="#" class="sidebar-link">My Purchases<i class="fas fa-shopping-cart"></i></a>
-                    </div>
-                    <div class="sidebar-menu-section">
-                        <h3 class="section-title">Notifications</h3>
-                        <a href="#" class="sidebar-link">Alerts<i class="fas fa-bell"></i></a>
-                    </div>
-                    <div class="sidebar-menu-section">
                         <h3 class="section-title">Settings</h3>
                         <a href="account_settings.php" class="sidebar-link">Account Settings<i class="fas fa-cog"></i></a>
                         <a href="privacy_settings.php" class="sidebar-link">Privacy Settings<i class="fas fa-shield-alt"></i></a>
