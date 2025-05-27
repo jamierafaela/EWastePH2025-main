@@ -462,6 +462,8 @@ $result = $conn->query($sql);
                     checkoutButton.classList.remove("disabled");
                     checkoutLink.style.pointerEvents = "auto";
                     checkoutLink.href = "checkout1.php?cartData=" + encodeURIComponent(JSON.stringify(cart));
+
+                    updateCheckoutLink();
                 }
 
                 attachEventHandlers();
@@ -534,7 +536,7 @@ $result = $conn->query($sql);
                 return selectedItems;
             }
             
-            // Calculate and update the total price of selected items
+            
             function updateSelectedTotal() {
                 const selectedItems = getSelectedItems();
                 let totalPrice = 0;
@@ -557,6 +559,36 @@ $result = $conn->query($sql);
                     deleteSelectedBtn.classList.add("disabled");
                 }
                 updateSelectedTotal();
+                updateCheckoutLink();
+            }
+
+            function updateCheckoutLink() {
+                const selectedItems = getSelectedItems();
+                
+                if (selectedItems.length === 0) {
+                    checkoutButton.classList.add("disabled");
+                    checkoutLink.removeAttribute("href");
+                    checkoutLink.style.pointerEvents = "none";
+                    return;
+                }
+                
+                
+                const selectedCartItems = cart.filter(item => selectedItems.includes(item.id));
+                
+            
+                const hasInvalidItems = selectedCartItems.some(item => 
+                    item.stock <= 0 || item.quantity > item.stock
+                );
+                
+                if (hasInvalidItems) {
+                    checkoutButton.classList.add("disabled");
+                    checkoutLink.removeAttribute("href");
+                    checkoutLink.style.pointerEvents = "none";
+                } else {
+                    checkoutButton.classList.remove("disabled");
+                    checkoutLink.style.pointerEvents = "auto";
+                    checkoutLink.href = "checkout1.php?cartData=" + encodeURIComponent(JSON.stringify(selectedCartItems));
+                }
             }
 
             //load cart from db
