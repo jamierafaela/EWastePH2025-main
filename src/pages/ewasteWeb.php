@@ -16,6 +16,7 @@ $result = $conn->query($sql);
 //=====================================================
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $justLoggedIn = false;
 
 if (isset($_SESSION['just_logged_in']) && $_SESSION['just_logged_in'] === true) {
@@ -96,9 +97,280 @@ $_SESSION['csrf_token'] = $csrf_token;
     margin-bottom: 25px;
 }
 
-</style>
+/* Admin Choice Modal Styles */
+.admin-choice-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
 
-    </style>
+.admin-choice-box {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+}
+
+.admin-choice-box h2 {
+    color: #2e7d32;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.admin-choice-box p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.admin-choice-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.admin-choice-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    min-width: 150px;
+}
+
+.admin-choice-btn.dashboard {
+    background: #4caf50;
+    color: white;
+}
+
+.admin-choice-btn.dashboard:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}
+
+.admin-choice-btn.admin-panel {
+    background:rgb(28, 96, 32);
+    color: white;
+}
+
+.admin-choice-btn.admin-panel:hover {
+    background:rgb(62, 89, 6);
+    transform: translateY(-2px);
+}
+
+/* Admin indicator in navigation */
+.admin-indicator {
+    background:rgb(194, 237, 186);
+    color: darkgreen;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+    text-transform: uppercase;
+}
+  /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content-wrapper {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-overlay.active .modal-content-wrapper {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+        }
+
+        .close-btn:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        .modal-body-content {
+            overflow-y: auto;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .actual-modal-content {
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .actual-modal-content h1 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .actual-modal-content h2 {
+            color: #667eea;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .actual-modal-content h3 {
+            color: #495057;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .actual-modal-content p {
+            margin-bottom: 10px;
+            text-align: justify;
+        }
+
+        .actual-modal-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .actual-modal-content li {
+            margin-bottom: 8px;
+        }
+
+        .actual-modal-content strong {
+            color: #495057;
+        }
+
+        .effective-date {
+            text-align: center;
+            font-style: italic;
+            color: #6c757d;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .contact-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .final-acknowledgment {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .terms-link {
+            color: #667eea;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .terms-link:hover {
+            color: #5a6fd8;
+        }
+
+        /* Scrollbar Styling */
+        .modal-body-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .modal-body-content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .modal-body-content::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
+        }
+
+</style>
 </head>
  
 <body>
@@ -108,9 +380,30 @@ $_SESSION['csrf_token'] = $csrf_token;
             <span class="login-popup-close">&times;</span>
             <h2>Welcome, <?php echo isset($_SESSION['full_name']) ? htmlspecialchars($_SESSION['full_name']) : 'User'; ?>!</h2>
             <p>You have successfully logged in to E-WastePH.</p>
+            <?php if ($isAdmin): ?>
+                <p style="color:rgb(15, 122, 42); font-weight: bold;">Admin Access Detected</p>
+            <?php endif; ?>
             <button class="login-popup-button">Continue</button>
         </div>
     </div>
+
+    <!-- Admin Choice Modal -->
+    <?php if ($isAdmin): ?>
+    <div id="adminChoiceModal" class="admin-choice-modal">
+        <div class="admin-choice-box">
+            <h2>Admin Access</h2>
+            <p>Welcome, Admin! Where would you like to go?</p>
+            <div class="admin-choice-buttons">
+                <a href="userdash.php" class="admin-choice-btn dashboard">
+                    <i class="fas fa-user"></i> User Dashboard
+                </a>
+                <a href="admin.php" class="admin-choice-btn admin-panel">
+                    <i class="fas fa-cog"></i> Admin Panel
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <!-- Header and Navigation -->
     <header>
@@ -126,7 +419,12 @@ $_SESSION['csrf_token'] = $csrf_token;
                 <li><a href="ewasteShop.php">Shop</a></li>
                 <li>
                     <?php if (isset($_SESSION['user_id'])): ?>
-                        <a href="userdash.php"><i class="fa fa-user"></i></a>
+                        <a href="#" onclick="showUserOptions(event)">
+                            <i class="fa fa-user"></i>
+                            <?php if ($isAdmin): ?>
+                                <span class="admin-indicator">Admin</span>
+                            <?php endif; ?>
+                        </a>
                     <?php else: ?>
                         <a href="#loginSection"><i class="fa fa-user"></i></a>
                     <?php endif; ?>
@@ -451,8 +749,6 @@ $_SESSION['csrf_token'] = $csrf_token;
                                                 </div>
                                     </li>
                                     <li>
-                                    
-
                                             <!-- Confirm Password Field and Match Status -->
                                            
                                                 <label>Confirm Password:</label>
@@ -479,7 +775,370 @@ $_SESSION['csrf_token'] = $csrf_token;
             </section>
         </section>
     <?php endif; ?>
+<!-- Terms and Conditions Modal -->
+    <div class="modal-overlay" id="termsModalOverlay" onclick="closeTermsModal(event)">
+        <div class="modal-content-wrapper" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10,9 9,9 8,9"/>
+                    </svg>
+                    Terms and Conditions
+                </div>
+                <button class="close-btn" onclick="closeTermsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body-content"> 
+              <div class="actual-modal-content">
+                  <h1>Terms and Conditions</h1>
+                  <div class="effective-date">
+                      <strong>E-Waste PH</strong><br>
+                      <strong>Effective Date:</strong> <?php echo date("F j, Y"); ?><br>
+                      <strong>Last Updated:</strong> <?php echo date("F j, Y"); ?>
+                  </div>
 
+                  <h2>1. Introduction and Acceptance</h2>
+                  <p>Welcome to E-Waste PH ("we," "our," "us"). These Terms and Conditions ("Terms") govern your use of our website located at www.ewasteph.com and all related services provided by E-Waste PH.</p>
+                  <p>By accessing or using our website and services, you agree to be bound by these Terms. If you do not agree to these Terms, please do not use our services.</p>
+
+                  <h2>2. About Our Services</h2>
+                  <p>E-Waste PH provides electronic waste collection, recycling, and disposal services in the Philippines. Our services include:</p>
+                  <ul>
+                      <li>Collection of electronic waste from residential and commercial locations</li>
+                      <li>Proper recycling and disposal of electronic devices</li>
+                      <li>Data destruction services</li>
+                      <li>Environmental compliance certification</li>
+                      <li>Educational resources about e-waste management</li>
+                      <li>Online marketplace for buying and selling refurbished electronics</li>
+                  </ul>
+
+                  <h2>3. Definitions</h2>
+                  <ul>
+                      <li><strong>"E-waste"</strong> refers to discarded electronic devices and equipment</li>
+                      <li><strong>"User"</strong> refers to any person or entity using our website or services</li>
+                      <li><strong>"Services"</strong> refers to all services provided by E-Waste PH</li>
+                      <li><strong>"Content"</strong> refers to all information, text, images, and materials on our website</li>
+                      <li><strong>"Listing"</strong> refers to any item posted for sale or exchange on our platform</li>
+                      <li><strong>"Seller"</strong> refers to users who list items for sale on our platform</li>
+                      <li><strong>"Buyer"</strong> refers to users who purchase items through our platform</li>
+                  </ul>
+
+                  <h2>4. User Eligibility and Account Registration</h2>
+                  <h3>4.1 Eligibility</h3>
+                  <ul>
+                      <li>Users must be at least 18 years old or have parental/guardian consent</li>
+                      <li>Users must provide accurate and complete information</li>
+                      <li>Users must comply with all applicable Philippine laws and regulations</li>
+                  </ul>
+                  <h3>4.2 Account Registration</h3>
+                  <ul>
+                      <li>Some services may require account creation</li>
+                      <li>You are responsible for maintaining account security</li>
+                      <li>You must notify us immediately of any unauthorized access</li>
+                      <li>One person or entity per account unless otherwise authorized</li>
+                  </ul>
+                  <h3>4.3 Identity Verification and Truthful Information</h3>
+                  <ul>
+                      <li>Users must provide accurate, current, and truthful information</li>
+                      <li>Falsification of identity, contact information, or personal details is strictly prohibited</li>
+                      <li>Users must promptly update any changes to their account information</li>
+                      <li>We reserve the right to verify user identity and may request additional documentation</li>
+                      <li>Providing false information may result in immediate account suspension or termination</li>
+                  </ul>
+
+                  <h2>5. User Conduct and Prohibited Activities</h2>
+                  <h3>5.1 Acceptable Use</h3>
+                  <p>Users must conduct themselves professionally and respectfully when using our services and interacting with other users, staff, or partners.</p>
+                  <h3>5.2 Prohibited Activities</h3>
+                  <p>Users are strictly prohibited from:</p>
+                  <ul>
+                      <li>Providing false, misleading, or inaccurate information</li>
+                      <li>Impersonating another person or entity</li>
+                      <li>Creating multiple accounts to circumvent restrictions</li>
+                      <li>Posting inappropriate, offensive, or harmful content</li>
+                      <li>Using profanity, hate speech, or discriminatory language</li>
+                      <li>Sharing content that is defamatory, threatening, or harassing</li>
+                      <li>Posting sexually explicit, violent, or illegal content</li>
+                      <li>Engaging in fraudulent activities or scams</li>
+                      <li>Attempting to bypass security measures</li>
+                      <li>Interfering with the proper functioning of our services</li>
+                  </ul>
+                  <h3>5.3 Content Standards</h3>
+                  <p>All user-generated content must:</p>
+                  <ul>
+                      <li>Be accurate and truthful</li>
+                      <li>Comply with Philippine laws and regulations</li>
+                      <li>Respect intellectual property rights</li>
+                      <li>Be appropriate for all audiences</li>
+                      <li>Not contain spam, advertisements, or promotional material (unless authorized)</li>
+                  </ul>
+
+                  <h2>6. Listing Terms and Marketplace Rules</h2>
+                  <h3>6.1 Listing Requirements</h3>
+                  <ul>
+                      <li>All listings must accurately describe the item being sold</li>
+                      <li>Photos must be clear, recent, and accurately represent the item</li>
+                      <li>Pricing must be clearly stated and reasonable</li>
+                      <li>Item condition must be honestly described</li>
+                      <li>Only functional or repairable electronic items may be listed</li>
+                  </ul>
+                  <h3>6.2 Listing Restrictions</h3>
+                  <p>The following items may not be listed:</p>
+                  <ul>
+                      <li>Stolen or illegally obtained items</li>
+                      <li>Items that violate intellectual property rights</li>
+                      <li>Dangerous or hazardous materials</li>
+                      <li>Non-electronic items (unless specifically allowed)</li>
+                      <li>Items requiring special permits or licenses</li>
+                      <li>Counterfeit or replica items marketed as genuine</li>
+                  </ul>
+                  <h3>6.3 Listing Management</h3>
+                  <ul>
+                      <li>We reserve the right to remove any listing that violates these Terms</li>
+                      <li>Listings may be subject to review and approval</li>
+                      <li>Users are responsible for keeping their listings current and accurate</li>
+                      <li>Inactive or expired listings may be automatically removed</li>
+                  </ul>
+                  <h3>6.4 Transaction Responsibilities</h3>
+                  <ul>
+                      <li>Sellers are responsible for accurate item descriptions</li>
+                      <li>Buyers are responsible for inspecting items before purchase</li>
+                      <li>Payment and delivery arrangements are between buyers and sellers</li>
+                      <li>We may provide dispute resolution services but are not liable for transaction outcomes</li>
+                  </ul>
+
+                  <h2>7. Service Terms and Scheduling</h2>
+                  <h3>7.1 Collection Services</h3>
+                  <ul>
+                      <li>Collection services are available within our designated service areas</li>
+                      <li>Scheduling is subject to availability and confirmation</li>
+                      <li>We reserve the right to refuse collection of certain items or materials</li>
+                      <li>Minimum quantities may apply for collection services</li>
+                  </ul>
+                  <h3>7.2 Accepted Items</h3>
+                  <p>We accept various electronic devices including but not limited to:</p>
+                  <ul>
+                      <li>Computers, laptops, and tablets</li>
+                      <li>Mobile phones and accessories</li>
+                      <li>Televisions and monitors</li>
+                      <li>Printers and office equipment</li>
+                      <li>Home appliances with electronic components</li>
+                  </ul>
+                  <h3>7.3 Prohibited Items</h3>
+                  <p>We do not accept:</p>
+                  <ul>
+                      <li>Hazardous materials beyond standard e-waste</li>
+                      <li>Items containing radioactive materials</li>
+                      <li>Medical devices without proper authorization</li>
+                      <li>Items that pose safety risks to our personnel</li>
+                  </ul>
+
+                  <h2>8. Pricing and Payment</h2>
+                  <h3>8.1 Service Fees</h3>
+                  <ul>
+                      <li>Pricing information is available on our website or upon request</li>
+                      <li>Fees may vary based on location, quantity, and type of items</li>
+                      <li>Special handling fees may apply for certain items</li>
+                      <li>Listing fees may apply for marketplace services</li>
+                  </ul>
+                  <h3>8.2 Payment Terms</h3>
+                  <ul>
+                      <li>Payment is due as specified in your service agreement</li>
+                      <li>We accept various payment methods as indicated on our website</li>
+                      <li>Late payment fees may apply for overdue accounts</li>
+                      <li>All prices are in Philippine Peso (PHP) unless otherwise stated</li>
+                  </ul>
+
+                  <h2>9. Data Security and Privacy</h2>
+                  <h3>9.1 Data Destruction</h3>
+                  <ul>
+                      <li>We provide secure data destruction services for storage devices</li>
+                      <li>Data destruction certificates are available upon request</li>
+                      <li>We are not responsible for data not properly backed up by users</li>
+                      <li>Users should remove personal data before service when possible</li>
+                  </ul>
+                  <h3>9.2 Privacy</h3>
+                  <ul>
+                      <li>Our <span class="terms-link" onclick="openPrivacyPolicyModal()">Privacy Policy</span> governs the collection and use of personal information</li>
+                      <li>We implement industry-standard security measures</li>
+                      <li>Personal information is handled in compliance with Philippine data protection laws</li>
+                  </ul>
+
+                  <h2>10. Environmental Compliance</h2>
+                  <h3>10.1 Regulatory Compliance</h3>
+                  <ul>
+                      <li>We operate in compliance with Philippine environmental laws</li>
+                      <li>We maintain proper licenses and certifications</li>
+                      <li>We follow Department of Environment and Natural Resources (DENR) guidelines</li>
+                      <li>We adhere to international e-waste management standards</li>
+                  </ul>
+                  <h3>10.2 Certificates and Documentation</h3>
+                  <ul>
+                      <li>Certificates of proper disposal are available upon request</li>
+                      <li>We maintain records of all processed materials</li>
+                      <li>Compliance documentation is available for audit purposes</li>
+                  </ul>
+
+                  <h2>11. Moderation and Enforcement</h2>
+                  <h3>11.1 Content Moderation</h3>
+                  <ul>
+                      <li>We reserve the right to monitor, review, and moderate all user content</li>
+                      <li>Inappropriate content will be removed without notice</li>
+                      <li>Repeated violations may result in account restrictions or termination</li>
+                  </ul>
+                  <h3>11.2 Enforcement Actions</h3>
+                  <p>Violations of these Terms may result in:</p>
+                  <ul>
+                      <li>Content removal</li>
+                      <li>Account warnings or restrictions</li>
+                      <li>Temporary or permanent account suspension</li>
+                      <li>Legal action where appropriate</li>
+                      <li>Cooperation with law enforcement authorities</li>
+                  </ul>
+
+                  <h2>12. Liability and Disclaimers</h2>
+                  <h3>12.1 Service Disclaimers</h3>
+                  <ul>
+                      <li>Services are provided "as is" without warranties</li>
+                      <li>We do not guarantee specific outcomes or timelines</li>
+                      <li>Weather, traffic, and other factors may affect service delivery</li>
+                      <li>We reserve the right to modify or discontinue services</li>
+                  </ul>
+                  <h3>12.2 Limitation of Liability</h3>
+                  <ul>
+                      <li>Our liability is limited to the fees paid for specific services</li>
+                      <li>We are not liable for indirect, consequential, or punitive damages</li>
+                      <li>Total liability shall not exceed the amount paid for services</li>
+                      <li>Users assume responsibility for backing up important data</li>
+                  </ul>
+                  <h3>12.3 Indemnification</h3>
+                  <p>Users agree to indemnify E-Waste PH against claims arising from:</p>
+                  <ul>
+                      <li>Misrepresentation of items or materials</li>
+                      <li>Violation of applicable laws or regulations</li>
+                      <li>Unauthorized or improper use of our services</li>
+                      <li>Breach of these Terms and Conditions</li>
+                      <li>False information or identity falsification</li>
+                      <li>Inappropriate content or conduct</li>
+                  </ul>
+
+                  <h2>13. Intellectual Property</h2>
+                  <h3>13.1 Our Content</h3>
+                  <ul>
+                      <li>All website content is owned by E-Waste PH or licensed to us</li>
+                      <li>Users may not reproduce, distribute, or modify our content without permission</li>
+                      <li>Our trademarks and logos are protected intellectual property</li>
+                  </ul>
+                  <h3>13.2 User Content</h3>
+                  <ul>
+                      <li>Users retain ownership of content they provide to us</li>
+                      <li>Users grant us license to use provided content for service delivery</li>
+                      <li>Users represent that they have rights to all provided content</li>
+                  </ul>
+
+                  <h2>14. Cancellation and Refunds</h2>
+                  <h3>14.1 Service Cancellation</h3>
+                  <ul>
+                      <li>Services may be cancelled with reasonable notice</li>
+                      <li>Cancellation fees may apply depending on timing and circumstances</li>
+                      <li>Scheduled collections must be cancelled at least 24 hours in advance</li>
+                  </ul>
+                  <h3>14.2 Refund Policy</h3>
+                  <ul>
+                      <li>Refunds are considered on a case-by-case basis</li>
+                      <li>Service fees are generally non-refundable once services are rendered</li>
+                      <li>Unused service credits may be refunded at our discretion</li>
+                  </ul>
+
+                  <h2>15. Force Majeure</h2>
+                  <p>We are not liable for delays or failures due to circumstances beyond our reasonable control, including:</p>
+                  <ul>
+                      <li>Natural disasters, weather conditions, or acts of God</li>
+                      <li>Government actions, regulations, or restrictions</li>
+                      <li>Labor disputes, strikes, or transportation issues</li>
+                      <li>Technical failures or infrastructure problems</li>
+                  </ul>
+
+                  <h2>16. Governing Law and Dispute Resolution</h2>
+                  <h3>16.1 Governing Law</h3>
+                  <p>These Terms are governed by the laws of the Republic of the Philippines.</p>
+                  <h3>16.2 Dispute Resolution</h3>
+                  <ul>
+                      <li>Disputes should first be addressed through direct communication</li>
+                      <li>Mediation may be pursued for unresolved disputes</li>
+                      <li>Philippine courts have jurisdiction over legal proceedings</li>
+                      <li>Users consent to venue in Quezon City for legal matters</li>
+                  </ul>
+
+                  <h2>17. Modifications and Updates</h2>
+                  <h3>17.1 Terms Updates</h3>
+                  <ul>
+                      <li>We reserve the right to modify these Terms at any time</li>
+                      <li>Material changes will be communicated via website notice or email</li>
+                      <li>Continued use of services constitutes acceptance of updated Terms</li>
+                      <li>Users should regularly review Terms for changes</li>
+                  </ul>
+                  <h3>17.2 Service Changes</h3>
+                  <ul>
+                      <li>We may modify, suspend, or discontinue services with notice</li>
+                      <li>New features may be subject to additional terms</li>
+                      <li>We strive to provide advance notice of significant changes</li>
+                  </ul>
+
+                  <h2>18. Termination</h2>
+                  <h3>18.1 Termination by Users</h3>
+                  <ul>
+                      <li>Users may terminate their account at any time</li>
+                      <li>Outstanding obligations survive termination</li>
+                      <li>Data and content may be deleted upon termination</li>
+                  </ul>
+                  <h3>18.2 Termination by E-Waste PH</h3>
+                  <p>We may terminate user accounts for:</p>
+                  <ul>
+                      <li>Violation of these Terms</li>
+                      <li>Fraudulent or illegal activity</li>
+                      <li>Non-payment of fees</li>
+                      <li>Abuse of our services or personnel</li>
+                      <li>Providing false information or falsifying identity</li>
+                      <li>Posting inappropriate content</li>
+                      <li>Repeated policy violations</li>
+                  </ul>
+
+                  <h2>19. Miscellaneous Provisions</h2>
+                  <h3>19.1 Entire Agreement</h3>
+                  <p>These Terms, along with our <span class="terms-link" onclick="openPrivacyPolicyModal()">Privacy Policy</span>, constitute the entire agreement between users and E-Waste PH.</p>
+                  <h3>19.2 Severability</h3>
+                  <p>If any provision of these Terms is found invalid, the remaining provisions shall remain in effect.</p>
+                  <h3>19.3 Assignment</h3>
+                  <p>Users may not assign their rights under these Terms without our written consent.</p>
+                  <h3>19.4 Waiver</h3>
+                  <p>Failure to enforce any provision does not constitute a waiver of our rights.</p>
+
+                  <h2>20. Contact Information</h2>
+                  <div class="contact-info">
+                      <p>For questions about these Terms and Conditions, please contact us:</p>
+                      <p><strong>E-Waste PH</strong><br>
+                      Email: ewasteph.services@gmail.com<br>
+                      Phone: +63 912 345 6789<br>
+                      Address: 123 E-Waste Avenue, Quezon City, Philippines<br>
+                      Website: www.ewasteph.com</p>
+                  </div>
+
+                  <div class="final-acknowledgment">
+                      <strong>By using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</strong>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
     <!-- Back to Top Button -->
     <button id="upButton" title="Go to top">
         <i class="fa fa-arrow-up"></i>
@@ -489,8 +1148,8 @@ $_SESSION['csrf_token'] = $csrf_token;
     <footer>
         <p>&copy; 2024 EWastePH. All rights reserved. </p>
         <div class="footer-links">
-            <a href="#">Privacy Policy </a>
-            <a href="#">Terms of Service</a>
+           <a href="#" onclick="openTermsModal(event)">Terms and Conditions</a> 
+            <a href="#" onclick="openTermsModal(event)">Privacy Policy</a>
         </div>
         <div class="footer-social">
             <a href="https://www.facebook.com/yourpage" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -498,22 +1157,58 @@ $_SESSION['csrf_token'] = $csrf_token;
             <a href="https://www.instagram.com/yourprofile" target="_blank"><i class="fab fa-instagram"></i></a>
         </div>
     </footer>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
+    //for footer modal
+      function openTermsModal(event) {
+            event.preventDefault(); // Prevent default link behavior
+            const modalOverlay = document.getElementById('termsModalOverlay');
+            if (modalOverlay) {
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeTermsModal(event) {
+            const modalOverlay = document.getElementById('termsModalOverlay');
+            // If the click is on the overlay itself or on a close button
+            if (modalOverlay && ((event && event.target === modalOverlay) || (event && event.target.closest('.close-btn')) || !event)) {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modalOverlay = document.getElementById('termsModalOverlay');
+                if (modalOverlay && modalOverlay.classList.contains('active')) {
+                    closeTermsModal();
+                }
+            }
+        });
+
+        // Set current date on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            const currentDateEl = document.getElementById('current-date');
+            const updatedDateEl = document.getElementById('updated-date');
+            
+            if (currentDateEl) currentDateEl.textContent = currentDate;
+            if (updatedDateEl) updatedDateEl.textContent = currentDate;
+        });
+
+   
+        function openPrivacyPolicyModal() {
+            alert('Privacy Policy modal would open here. You can implement this similarly to the Terms modal.');
+        }
             // script for login
             const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
+            const isAdmin = <?php echo $isAdmin ? 'true' : 'false'; ?>;
 
             function handleAction(action) {
                 if (isLoggedIn) {
@@ -530,6 +1225,33 @@ $_SESSION['csrf_token'] = $csrf_token;
                     });
                 }
             }
+
+            // To show your loggedin
+            function showUserOptions(event) {
+                event.preventDefault();
+                
+                if (isAdmin) {
+                    document.getElementById('adminChoiceModal').style.display = 'flex';
+                } else {
+                 
+                    window.location.href = 'userdash.php';
+                }
+            }
+
+            document.getElementById('adminChoiceModal')?.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const adminModal = document.getElementById('adminChoiceModal');
+                    if (adminModal && adminModal.style.display === 'flex') {
+                        adminModal.style.display = 'none';
+                    }
+                }
+            });
  
         // Login popup 
         document.addEventListener('DOMContentLoaded', function() {
@@ -546,6 +1268,12 @@ $_SESSION['csrf_token'] = $csrf_token;
                 if (closeBtn) {
                     closeBtn.addEventListener('click', function() {
                         loginPopup.classList.remove('show');
+                        // Show admin choice modal after closing login popup if user is admin
+                        if (isAdmin) {
+                            setTimeout(() => {
+                                document.getElementById('adminChoiceModal').style.display = 'flex';
+                            }, 300);
+                        }
                     });
                 }
                 
@@ -553,12 +1281,24 @@ $_SESSION['csrf_token'] = $csrf_token;
                 if (continueBtn) {
                     continueBtn.addEventListener('click', function() {
                         loginPopup.classList.remove('show');
+                        // Show admin choice modal after closing login popup if user is admin
+                        if (isAdmin) {
+                            setTimeout(() => {
+                                document.getElementById('adminChoiceModal').style.display = 'flex';
+                            }, 300);
+                        }
                     });
                 }
 
                 loginPopup.addEventListener('click', function(e) {
                     if (e.target === loginPopup) {
                         loginPopup.classList.remove('show');
+                        // Show admin choice modal after closing login popup if user is admin
+                        if (isAdmin) {
+                            setTimeout(() => {
+                                document.getElementById('adminChoiceModal').style.display = 'flex';
+                            }, 300);
+                        }
                     }
                 });
             }
@@ -566,7 +1306,6 @@ $_SESSION['csrf_token'] = $csrf_token;
 
         //Password toggle functionality
     document.addEventListener('DOMContentLoaded', function() {
-        // Toggle password visibility
         document.querySelectorAll('.toggle-password').forEach(function(toggle) {
             toggle.addEventListener('click', function() {
                 const targetId = this.getAttribute('data-target');

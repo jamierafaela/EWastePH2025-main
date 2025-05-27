@@ -791,7 +791,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
   </div>
 
-  <script src="../../src/scripts/userDash.js"></script>
+
+
+
+<script src="../../src/scripts/userDash.js"></script>
 
 <script>
   function toggleSubmitButton() {

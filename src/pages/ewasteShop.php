@@ -105,6 +105,8 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Jersey+10&family=Jersey+25&display=swap" rel="stylesheet">
     <style>
+
+        
         .login-alert {
             background-color: #f8d7da;
             color: #721c24;
@@ -121,75 +123,7 @@ $result = $conn->query($sql);
             text-decoration: underline;
         }
         
-        .checkout.disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
         
-        .stock-warning {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-            font-weight: bold;
-        }
-
-        .cart-item-checkbox {
-            transform: scale(1.3);
-            margin-right: 10px;
-        }
-        
-        .cart-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            padding: 0 10px;
-        }
-        
-        .select-all-container {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 0 10px;
-        }
-        
-        .select-all-container label {
-            margin-left: 5px;
-        }
-        
-        .action-btn {
-            padding: 8px 15px;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .action-btn:hover {
-            background-color: #c82333;
-        }
-        
-        .action-btn.disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        
-        .item {
-            display: flex;
-            align-items: center;
-        }
-        
-        .item-content-wrapper {
-            display: flex;
-            flex: 1;
-        }
-
-        .selected-total-price {
-            margin-left: auto;
-            font-weight: bold;
-            color: #28a745;
-        }
     </style>
 </head>
 
@@ -677,6 +611,8 @@ $result = $conn->query($sql);
             }
 
         });
+
+        
     </script>
 
 </body>
